@@ -1,0 +1,6 @@
+jkbms_ble 
+
+A python project to try and interface with the JK-BMS via BLE.
+
+To get the relevant information (cell voltages, currents, ...) and
+send them to a mqtt server (or other intrfaces as needed).
