@@ -159,43 +159,46 @@ if __name__ == "__main__":
 
     interval = 60.0
     lastrun = time.time() - 55
-    
-    bms = btle.Peripheral('C8:47:8C:E2:81:41')
-    log.debug("pheripheral object: %s" % (bms))
-    bms.withDelegate(BLEDelegate())
-    
-    services = bms.getServices()
-    log.debug("services: %s" % (services))
 
-    while True:
-        try:            
-            log.info("Startup; wait 10s to initialize communication")
-            time.sleep(10)      # wait 10s to give mqtt connection time to initiates
-            startupSequence()   # make shure after 1st start everything is in order
+    try:            
+        log.info("Startup; wait 10s to initialize communication")
+        time.sleep(10)      # wait 10s to give mqtt connection time to initiates
+        startupSequence()   # make shure after 1st start everything is in order
+        
+        'connect to device and get service information'
+        bms = btle.Peripheral('C8:47:8C:E2:81:41')
+        log.debug("pheripheral object: %s" % (bms))
+        bms.withDelegate(BLEDelegate())
+        
+        services = bms.getServices()
+        log.debug("services: %s" % (services))
             
-            scanner = Scanner().withDelegate(ScanDelegate())
-            
-            while True:
-                actualrun = time.time()
-                # log.debug('actualtime: ' + str(nowTime))
-                # log.debug('nigttime: ' + str(nightTime))
-                # log.debug('morningtime: ' + str(morningTime))
-                if actualrun - lastrun > interval:
-                    time.sleep(1)
-                    
-                else:
-                    time.sleep(1)
+        
+           
+        while True:
+            actualrun = time.time()
+            # log.debug('actualtime: ' + str(nowTime))
+            # log.debug('nigttime: ' + str(nightTime))
+            # log.debug('morningtime: ' + str(morningTime))
+            if actualrun - lastrun > interval:
+                time.sleep(1)
+                
+            else:
+                time.sleep(1)
 
-        except:
-            log.error('exeption raised waiting for 2 minutes before retrying')
-            log.exception(sys.exc_info())
-            # raise
-            time.sleep(120)
-            mqttClient.reconnect()
+    except:
+        log.error('exeption raised waiting for 2 minutes before retrying')
+        log.exception(sys.exc_info())
+        # raise
+        bms.disconnect()
+        time.sleep(120)
+        mqttClient.reconnect()
+        bms.connect()
 
-        finally:
-            log.info("finished")
+    finally:
+        log.info("finished")
 
-            # close the clients
-            mqttClient.loop_stop()
-            mqttClient.disconnect()
+        # close the clients
+        mqttClient.loop_stop()
+        mqttClient.disconnect()
+        bms.disconnect()
