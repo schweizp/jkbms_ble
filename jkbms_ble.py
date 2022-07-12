@@ -29,8 +29,8 @@ from paho.mqtt.client import MQTT_ERR_QUEUE_SIZE
 from collections import OrderedDict
 
 
-# scan delegate class for BLE
-class ScanDelegate(DefaultDelegate):
+# delegate class for BLE
+class BLEDelegate(DefaultDelegate):
     def __init__(self):
         DefaultDelegate.__init__(self)
 
@@ -56,8 +56,7 @@ fh.setLevel(logging.INFO)
 ch = logging.StreamHandler()
 ch.setLevel(logging.ERROR)
 # create formatter and add it to the handlers
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(threadName)s - '
-                                '%(levelname)s - %(module)s:%(lineno)s - %(message)s')
+formatter = logging.Formatter('%(levelname)s - %(message)s')
 fh.setFormatter(formatter)
 ch.setFormatter(formatter)
 # add the handlers to the logger
@@ -84,6 +83,15 @@ if args.info: # switch to info level
     fh.setLevel(logging.INFO)
 
 if args.debug: # switch to debug level
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(threadName)s - '
+                                    '%(levelname)s - %(module)s:%(lineno)s - %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    # add the handlers to the logger
+    log.addHandler(fh)
+    log.addHandler(ch)
+    
     log.setLevel(logging.DEBUG)
     ch.setLevel(logging.DEBUG)
     fh.setLevel(logging.DEBUG)
@@ -151,14 +159,18 @@ if __name__ == "__main__":
 
     interval = 60.0
     lastrun = time.time() - 55
-    nightTime = time.strptime('22:00', '%H:%M')
-    morningTime = time.strptime('04:30', '%H:%M')
     
+    bms = btle.Pheripheral('c8:47:8c:e2:81:41')
+    log.debug("pheripheral object: %s" % (bms))
+    bms.withDelegate(BLEDelegate())
+    
+    services = bms.getServices()
+    log.debug("services: %s" % (services))
 
     while True:
         try:            
             log.info("Startup; wait 10s to initialize communication")
-            time.sleep(10)      # wait 10s to give modbus connection time to initiates
+            time.sleep(10)      # wait 10s to give mqtt connection time to initiates
             startupSequence()   # make shure after 1st start everything is in order
             
             scanner = Scanner().withDelegate(ScanDelegate())
@@ -169,12 +181,8 @@ if __name__ == "__main__":
                 # log.debug('nigttime: ' + str(nightTime))
                 # log.debug('morningtime: ' + str(morningTime))
                 if actualrun - lastrun > interval:
+                    time.sleep(1)
                     
-                    devices = scanner.scan(10.0)
-                    for dev in devices:
-                        log.info("Device %s (%s), RSSI=%d dB" % (dev.addr, dev.addrType, dev.rssi))
-                        for (adtype, desc, value) in dev.getScanData():
-                            log.info("  %s = %s" % (desc, value))
                 else:
                     time.sleep(1)
 
