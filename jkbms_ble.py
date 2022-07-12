@@ -160,7 +160,7 @@ if __name__ == "__main__":
     interval = 60.0
     lastrun = time.time() - 55
     
-    bms = btle.Pheripheral('c8:47:8c:e2:81:41')
+    bms = btle.Peripheral('c8:47:8c:e2:81:41')
     log.debug("pheripheral object: %s" % (bms))
     bms.withDelegate(BLEDelegate())
     
