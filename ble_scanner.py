@@ -77,7 +77,8 @@ if args.debug: # switch to debug level
     ch.setFormatter(formatter)
     # add the handlers to the logger
     log.addHandler(fh)
-    log.addHandler(ch)    log.setLevel(logging.DEBUG)
+    log.addHandler(ch)
+    log.setLevel(logging.DEBUG)
     ch.setLevel(logging.DEBUG)
     fh.setLevel(logging.DEBUG)
 
