@@ -31,7 +31,7 @@ from collections import OrderedDict
 
 # delegate class for BLE
 class BLEDelegate(DefaultDelegate):
-    def __init__(self):
+    def __init__(self, jkbms):
         DefaultDelegate.__init__(self)
         self.jkbms = jkbms
         log.debug('Delegate {}'.format(str(jkbms)))
