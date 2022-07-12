@@ -44,7 +44,7 @@ class ScanDelegate(DefaultDelegate):
 log = logging.getLogger('jkbms_ble')
 log.setLevel(logging.WARNING)
 # create file handler which logs even debug messages
-fh = logging.handlers.TimedRotatingFileHandler('hm_mb_control.log','D', 1, 5)
+fh = logging.handlers.TimedRotatingFileHandler('ble_scanner.log','D', 1, 5)
 fh.setLevel(logging.INFO)
 # create console handler with a higher log level
 ch = logging.StreamHandler()
