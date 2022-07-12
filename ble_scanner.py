@@ -49,14 +49,6 @@ fh.setLevel(logging.INFO)
 # create console handler with a higher log level
 ch = logging.StreamHandler()
 ch.setLevel(logging.ERROR)
-# create formatter and add it to the handlers
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(threadName)s - '
-                                '%(levelname)s - %(module)s:%(lineno)s - %(message)s')
-fh.setFormatter(formatter)
-ch.setFormatter(formatter)
-# add the handlers to the logger
-log.addHandler(fh)
-log.addHandler(ch)
 
 # parse arguments
 parser = argparse.ArgumentParser(description = 'Victron modbus control test')
@@ -78,7 +70,14 @@ ch.setLevel(logging.INFO)
 fh.setLevel(logging.INFO)
 
 if args.debug: # switch to debug level
-    log.setLevel(logging.DEBUG)
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(threadName)s - '
+                                    '%(levelname)s - %(module)s:%(lineno)s - %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    # add the handlers to the logger
+    log.addHandler(fh)
+    log.addHandler(ch)    log.setLevel(logging.DEBUG)
     ch.setLevel(logging.DEBUG)
     fh.setLevel(logging.DEBUG)
 
