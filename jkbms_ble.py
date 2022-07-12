@@ -121,7 +121,7 @@ powerSetpoint = 100     # power setpoint for manual control (via mqtt remote con
 
 # The callback for when the mqtt client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
-    log.info("Connected with result code "+str(rc))
+    log.info("MQTT Connected with result code "+str(rc))
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
@@ -131,7 +131,7 @@ def on_connect(client, userdata, flags, rc):
 
 # The callback for when a PUBLISH message is received from the mqtt server.
 def on_message(client, userdata, msg):
-    log.info("Publish message received")
+    log.info("MQTT Publish message received")
     log.debug(msg.topic+" "+str(msg.payload))
     
 
@@ -165,21 +165,36 @@ if __name__ == "__main__":
         time.sleep(10)      # wait 10s to give mqtt connection time to initiates
         startupSequence()   # make shure after 1st start everything is in order
         
-        'connect to device and get service information'
-        bms = btle.Peripheral('C8:47:8C:E2:81:41')
-        log.debug("pheripheral object: %s" % (bms))
-        bms.withDelegate(BLEDelegate())
+        # connect to device and get service information
+        bms = btle.Peripheral(None)
+        attempt = 0
+        connected = False
         
-        services = bms.getServices()
-        log.debug("services: %s" % (services))
+        while not connected:
+            attempt += 1
+            log.debug("connection attempt #%i" % (attempt))
+            if attempt > 3:
+                log.info('Cannot connect to C8:47:8C:E2:81:41 - exceeded %i attempts' % (attempt - 1))
+            try:
+                bms.connect("C8:47:8C:E2:81:41")
+                connected = True
+            except Exception:
+                continue
+        
+        if connected:
+            log.debug("pheripheral object: %s" % (bms))
+            bms.withDelegate(BLEDelegate())
             
-        
-           
+            services = bms.getServices()
+            log.debug("services: %s" % (services))
+        else: 
+            log.debug("could not connect")
+                
+        # "c8:47:8C:E2:92:0C"
+    
+       
         while True:
             actualrun = time.time()
-            # log.debug('actualtime: ' + str(nowTime))
-            # log.debug('nigttime: ' + str(nightTime))
-            # log.debug('morningtime: ' + str(morningTime))
             if actualrun - lastrun > interval:
                 time.sleep(1)
                 
