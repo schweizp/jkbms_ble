@@ -127,6 +127,7 @@ if __name__ == "__main__":
             time.sleep(120)
             
         finally:
-            scanner.stop()
+            if scanner:
+                scanner.stop()
             log.debug("finished")
             
