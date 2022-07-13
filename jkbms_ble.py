@@ -615,6 +615,7 @@ if __name__ == "__main__":
         
         #log.debug(str(jk))
         if bms.connect():
+            log.debug('--> YES, I am connected!')
             bms.getServices()
             # bms.getBLEData()
             bms.disconnect()
