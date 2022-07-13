@@ -36,7 +36,7 @@ class BLEDelegate(DefaultDelegate):
     def __init__(self, jkbms):
         DefaultDelegate.__init__(self)
         self.jkbms = jkbms
-        log.debug('Delegate {}'.format(str(jkbms)))
+        # log.debug('Delegate {}'.format(str(jkbms)))
         self.notificationData = bytearray()
 
     def handleDiscovery(self, dev, isNewDev, isNewData):
@@ -382,7 +382,7 @@ class jkbms:
     def connect(self):
         # Intialise BLE device
         self.device = btle.Peripheral(None)
-        log.debug('device info (not yet connected) {}'.format(self.device))
+        # log.debug('device info (not yet connected) {}'.format(self.device))
         self.device.withDelegate(BLEDelegate(self))
         # Connect to BLE Device
         connected = False
@@ -395,7 +395,9 @@ class jkbms:
                 return connected
             try:
                 self.device.connect(self.mac)
+                log.debug('connected')
                 self._device.setMTU(330)    # line copied from mpp-solar project (reason?)
+                log.debug('MTU set')
                 connected = True
             except Exception:
                 time.sleep(2)     # wait 2s before next connection attempt
@@ -630,7 +632,7 @@ if __name__ == "__main__":
         
         # connect to device and get service information
         bms = jkbms(name=name, model=model, mac=mac, command=command, tag=tag, format=format, records=1, maxConnectionAttempts=30)
-        log.debug('peripheral device info: %s' %(bms))
+        # log.debug('peripheral device info: %s' %(bms))
         
         if bms.connect():
             log.debug('--> YES, I am connected!')
