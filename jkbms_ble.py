@@ -419,6 +419,7 @@ class jkbms:
         # log.debug('Connected to {}'.format(deviceName.read()))
         log.debug('Connected to {}'.format(deviceName))
         log.debug('Connected to %s' % (deviceName[0]))
+        log.debug('Connected to %s' % (deviceName[0].read()))
 
 
         # Connect to the notify service
@@ -626,7 +627,7 @@ if __name__ == "__main__":
         
         if bms.connect():
             log.debug('--> YES, I am connected!')
-            bms.getServices()
+            # bms.getServices()
             bms.getBLEData()
             bms.disconnect()
         else:
