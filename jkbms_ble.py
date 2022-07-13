@@ -396,8 +396,8 @@ class jkbms:
             try:
                 self.device.connect(self.mac)
                 log.debug('connected')
-                # self._device.setMTU(330)    # line copied from mpp-solar project (reason?)
-                # log.debug('MTU set')
+                self.device.setMTU(330)    # line copied from mpp-solar project (reason?)
+                log.debug('MTU set')
                 connected = True
             except Exception:
                 time.sleep(2)     # wait 2s before next connection attempt
