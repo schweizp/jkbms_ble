@@ -418,6 +418,7 @@ class jkbms:
         deviceName = serviceId.getCharacteristics(btle.AssignedNumbers.deviceName)#[0]
         # log.debug('Connected to {}'.format(deviceName.read()))
         log.debug('Connected to {}'.format(deviceName))
+        log.debug('Connected to %s' % (deviceName[0]))
 
 
         # Connect to the notify service
