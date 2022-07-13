@@ -392,6 +392,7 @@ class jkbms:
                 self.device.connect(self.mac)
                 connected = True
             except Exception:
+                time.sleep(2)     # wait 2s before next connection attempt
                 continue
         return connected
     
@@ -612,8 +613,8 @@ if __name__ == "__main__":
         
         # connect to device and get service information
         bms = jkbms(name=name, model=model, mac=mac, command=command, tag=tag, format=format, records=1, maxConnectionAttempts=30)
+        log.debug('peripheral device info: %s' %(bms))
         
-        #log.debug(str(jk))
         if bms.connect():
             log.debug('--> YES, I am connected!')
             bms.getServices()
