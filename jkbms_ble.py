@@ -333,11 +333,14 @@ INFO_RECORD = 3
 getInfo = b'\xaa\x55\x90\xeb\x97\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x11'
 getCellInfo = b'\xaa\x55\x90\xeb\x96\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10'
 
-name = 'wtfsection'
+name = 'JKBMS-Top'
+# name = 'JKBMS-Bottom'
 model = 'JK-B2A24S'
 mac = 'C8:47:8C:E2:81:41'
+# max = 'C8:47:8C:E2:92:0C'
 command = 'command'
-tag = 'JKBMS_CellData_bot'
+tag = 'JKBMS_CellData_top'
+# tag = 'JKBMS_CellData_bot'
 format = 'mqtt'
 
 out=dict()
