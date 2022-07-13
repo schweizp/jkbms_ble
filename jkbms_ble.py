@@ -377,7 +377,7 @@ class jkbms:
     def connect(self):
         # Intialise BLE device
         self.device = btle.Peripheral(None)
-        log.debug('Connected with device {}'.format(self.device))
+        log.debug('device info (not yet connected) {}'.format(self.device))
         self.device.withDelegate(BLEDelegate(self))
         # Connect to BLE Device
         connected = False
@@ -400,10 +400,11 @@ class jkbms:
             self.services = self.device.getServices()
             log.debug("services: %s" % (self.services))
             for item in self.services:
+                log.debug('service item: %s' % (item))
                 self.characteristic = item.getCharacteristics()
-                log.debug('characteristics: %s' % (self.characteristic))
+                log.debug('  - characteristics: %s' % (self.characteristic))
                 self.descriptors = item.getDescriptors()
-                log.debug('descriptors: %s' % (self.descriptors))
+                log.debug('  - descriptors: %s' % (self.descriptors))
             
 
     def getBLEData(self):
