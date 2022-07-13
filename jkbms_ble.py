@@ -398,13 +398,17 @@ class jkbms:
     
     def getServices(self):            
             self.services = self.device.getServices()
-            log.debug("services: %s" % (self.services))
+            # log.debug("services: %s" % (self.services))
             for item in self.services:
                 log.debug('service item: %s' % (item))
                 self.characteristic = item.getCharacteristics()
-                log.debug('  - characteristics: %s' % (self.characteristic))
+                # log.debug('  - characteristics: %s' % (self.characteristic))
+                for c in self.characteristic:
+                    log.debug('    -- characteristic item: %s' % (c))
                 self.descriptors = item.getDescriptors()
-                log.debug('  - descriptors: %s' % (self.descriptors))
+                # log.debug('  - descriptors: %s' % (self.descriptors))
+                for d in self.descriptors:
+                    log.debug('    -- descriptor item: %s' % (d))
             
 
     def getBLEData(self):
