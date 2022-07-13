@@ -413,13 +413,13 @@ class jkbms:
             
 
     def getBLEData(self):
-        # Get the device name
+        '''# Get the device name
         serviceId = self.device.getServiceByUUID(btle.AssignedNumbers.genericAccess)
         deviceName = serviceId.getCharacteristics(btle.AssignedNumbers.deviceName)#[0]
         # log.debug('Connected to {}'.format(deviceName.read()))
         log.debug('Connected to {}'.format(deviceName))
         log.debug('Connected to %s' % (deviceName[0]))
-        log.debug('Connected to %s' % (deviceName[0].read()))
+        log.debug('Connected to %s' % (deviceName[0].read())) '''
 
 
         # Connect to the notify service
@@ -429,9 +429,11 @@ class jkbms:
         # Get the handles that we need to talk to
         # Read
         characteristicReadUuid = 'ffe3'
-        characteristicRead = serviceNotify.getCharacteristics(characteristicReadUuid)[0]
-        handleRead = characteristicRead.getHandle()
-        log.debug('Read characteristic: {}, handle {:x}'.format(characteristicRead, handleRead))
+        characteristicRead = serviceNotify.getCharacteristics(characteristicReadUuid)
+        log.debug('read char. %s' % (characteristicRead))
+        log.debug('read char. [0] %s' % (characteristicRead[0]))
+        handleRead = characteristicRead[0].getHandle()
+        log.debug('Read characteristic: {}, handle {:x}'.format(characteristicRead[0], handleRead))
 
         # ## TODO sort below
         # Need to dynamically find this handle....
