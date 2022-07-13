@@ -11,6 +11,7 @@ import os
 from socket import socket
 from stat import FILE_ATTRIBUTE_DIRECTORY
 import string
+import json
 import sys
 import time
 import logging
@@ -69,10 +70,10 @@ class BLEDelegate(DefaultDelegate):
         return False
 
     def processInfoRecord(self, record):
-        #log.debug('Processing info record')
+        log.debug('Processing info record')
         del record[0:5]
         counter = record.pop(0)
-        #log.debug('Record number: {}'.format(counter))
+        log.debug('Record number: {}'.format(counter))
         vendorID = bytearray()
         hardwareVersion = bytearray()
         softwareVersion = bytearray()
@@ -162,15 +163,15 @@ class BLEDelegate(DefaultDelegate):
             else:
                 passCode += bytes(_int.to_bytes(1, byteorder='big'))
 
-        #log.debug('VendorID: {}'.format(vendorID.decode('utf-8')))
+        log.debug('VendorID: {}'.format(vendorID.decode('utf-8')))
         #publish({'VendorID': vendorID.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
-        #log.debug('Device Name: {}'.format(deviceName.decode('utf-8')))
+        log.debug('Device Name: {}'.format(deviceName.decode('utf-8')))
         #publish({'DeviceName': deviceName.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
-        #log.debug('Pass Code: {}'.format(passCode.decode('utf-8')))
+        log.debug('Pass Code: {}'.format(passCode.decode('utf-8')))
         # #publish({'PassCode': passCode.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker)
-        #log.debug('Hardware Version: {}'.format(hardwareVersion.decode('utf-8')))
+        log.debug('Hardware Version: {}'.format(hardwareVersion.decode('utf-8')))
         #publish({'HardwareVersion': hardwareVersion.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
-        #log.debug('Software Version: {}'.format(softwareVersion.decode('utf-8')))
+        log.debug('Software Version: {}'.format(softwareVersion.decode('utf-8')))
         #publish({'SoftwareVersion': softwareVersion.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
         daysFloat = uptime / (60 * 60 * 24)
         days = math.trunc(daysFloat)
@@ -180,23 +181,23 @@ class BLEDelegate(DefaultDelegate):
         minutes = math.trunc(minutesFloat)
         secondsFloat = (minutesFloat - minutes) * 60
         seconds = math.trunc(secondsFloat)
-        #log.debug('Uptime: {}D{}H{}M{}S'.format(days, hours, minutes, seconds))
+        log.debug('Uptime: {}D{}H{}M{}S'.format(days, hours, minutes, seconds))
         #publish({'Uptime': '{}D{}H{}M{}S'.format(days, hours, minutes, seconds)}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
-        #log.debug('Power Up Times: {}'.format(powerUpTimes))
+        log.debug('Power Up Times: {}'.format(powerUpTimes))
         #publish({'Power Up Times: {}'.format(powerUpTimes)}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
 
     def processExtendedRecord(self, record):
-        #log.debug('Processing extended record')
+        log.debug('Processing extended record')
         del record[0:5]
         counter = record.pop(0)
-        #log.debug('Record number: {}'.format(counter))
+        log.debug('Record number: {}'.format(counter))
 
     def processCellDataRecord(self, record):
-        #log.debug('Processing cell data record')
-        #log.debug('Record length {}'.format(len(record)))
+        log.debug('Processing cell data record')
+        log.debug('Record length {}'.format(len(record)))
         del record[0:5]
         counter = record.pop(0)
-        #log.debug('Record number: {}'.format(counter))
+        log.debug('Record number: {}'.format(counter))
         # Process cell voltages
         volts = []
         size = 4
@@ -207,12 +208,12 @@ class BLEDelegate(DefaultDelegate):
         for i in range(0, number):
             volts.append(record[0:size])
             del record[0:size]
-        #log.debug('Volts: {}'.format(volts))
+        log.debug('Volts: {}'.format(volts))
         _totalvolt = 0
         for cell, volt in enumerate(volts):
             _volt = float(decodeHex(volt))
             out['B{:d}'.format(cell+1)]=round(_volt,4)
-            #log.debug('Cell: {:02d}, Volts: {:.4f}'.format(cell + 1, _volt))
+            log.debug('Cell: {:02d}, Volts: {:.4f}'.format(cell + 1, _volt))
             #publish({'VoltageCell{:02d}'.format(cell + 1): _volt}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
             _totalvolt += _volt
             if c_high < _volt:
@@ -235,7 +236,7 @@ class BLEDelegate(DefaultDelegate):
             del record[0:size]
         for cell, resistance in enumerate(resistances):
             out['R{:d}'.format(cell+1)]=round(decodeHex(resistance),4)
-            #log.debug('Cell: {:02d}, Resistance: {:.4f}'.format(cell, decodeHex(resistance)))
+            log.debug('Cell: {:02d}, Resistance: {:.4f}'.format(cell, decodeHex(resistance)))
             #publish({'ResistanceCell{:02d}'.format(cell): float(decodeHex(resistance))}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
         # log.debug (record)
 
@@ -623,11 +624,11 @@ if __name__ == "__main__":
         if bms.connect():
             log.debug('--> YES, I am connected!')
             bms.getServices()
-            # bms.getBLEData()
+            bms.getBLEData()
             bms.disconnect()
         else:
             log.debug('Failed to connect to {} {}'.format(name, mac))
-        # log.debug(json.dumps(out))
+        log.debug(json.dumps(out))
         
         """ while True:
             actualrun = time.time()
