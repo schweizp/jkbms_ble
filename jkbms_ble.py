@@ -415,7 +415,7 @@ class jkbms:
     def getBLEData(self):
         # Get the device name
         serviceId = self.device.getServiceByUUID(btle.AssignedNumbers.genericAccess)
-        deviceName = serviceId.getCharacteristics(btle.AssignedNumbers.deviceName)[0]
+        deviceName = serviceId.getCharacteristics(btle.AssignedNumbers.deviceName)#[0]
         log.debug('Connected to {}'.format(deviceName.read()))
 
         # Connect to the notify service
