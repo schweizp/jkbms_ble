@@ -428,7 +428,7 @@ class jkbms:
 
         # Get the handles that we need to talk to
         # Read
-        characteristicReadUuid = 'ffe3'
+        characteristicReadUuid = 'ffe2'     #'ffe3'
         characteristicRead = serviceNotify.getCharacteristics(characteristicReadUuid)
         log.debug('read char. %s' % (characteristicRead))
         log.debug('read char. [0] %s' % (characteristicRead[0]))
