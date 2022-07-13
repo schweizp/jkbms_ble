@@ -11,6 +11,7 @@ import os
 from socket import socket
 from stat import FILE_ATTRIBUTE_DIRECTORY
 import string
+import math
 import json
 import sys
 import time
@@ -391,6 +392,7 @@ class jkbms:
                 return connected
             try:
                 self.device.connect(self.mac)
+                self._device.setMTU(330)    # line copied from mpp-solar project (reason?)
                 connected = True
             except Exception:
                 time.sleep(2)     # wait 2s before next connection attempt
@@ -428,7 +430,7 @@ class jkbms:
 
         # Get the handles that we need to talk to
         # Read
-        characteristicReadUuid = 'ffe2'     #'ffe3'
+        characteristicReadUuid = 'ffe1'     #'ffe3' seems to be an "old" value
         characteristicRead = serviceNotify.getCharacteristics(characteristicReadUuid)
         log.debug('read char. %s' % (characteristicRead))
         log.debug('read char. [0] %s' % (characteristicRead[0]))
