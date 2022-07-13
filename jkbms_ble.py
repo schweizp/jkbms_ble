@@ -416,7 +416,9 @@ class jkbms:
         # Get the device name
         serviceId = self.device.getServiceByUUID(btle.AssignedNumbers.genericAccess)
         deviceName = serviceId.getCharacteristics(btle.AssignedNumbers.deviceName)#[0]
-        log.debug('Connected to {}'.format(deviceName.read()))
+        # log.debug('Connected to {}'.format(deviceName.read()))
+        log.debug('Connected to {}'.format(deviceName))
+
 
         # Connect to the notify service
         serviceNotifyUuid = 'ffe0'
