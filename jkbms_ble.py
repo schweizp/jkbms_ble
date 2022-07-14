@@ -242,11 +242,11 @@ class BLEDelegate(DefaultDelegate):
         balancercurrent = float(LittleHex2Short(record[0:size])) / 1000.0    # balancer current
         del record[0:size]
         
-        log.debug('Unknown value #1:   %' % (unknown1))
-        log.debug('Unknown value #2:   %' % (unknown2))
-        log.debug('Avg. cell voltage:  %' % (avgcellvoltage))
-        log.debug('Delta cell voltage: %' & (deltacellvoltage))
-        log.debug('Balancer current:   %' % (balancercurrent))
+        log.debug('Unknown value #1:   %s' % (unknown1))
+        log.debug('Unknown value #2:   %s' % (unknown2))
+        log.debug('Avg. cell voltage:  %s' % (avgcellvoltage))
+        log.debug('Delta cell voltage: %s' & (deltacellvoltage))
+        log.debug('Balancer current:   %s' % (balancercurrent))
         
         # Process cell wire resistances
         log.debug('Processing wire resistances')
