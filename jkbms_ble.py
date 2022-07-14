@@ -265,9 +265,11 @@ class BLEDelegate(DefaultDelegate):
         # log.debug (record)
         
         # process additional values
+        '''
         unknown3 = float(LittleHex2Short(record[0:2])) / 1000.0           # unknown
         del record[0:2]
         log.debug('Unknown value #3:   %s' % (unknown3))
+        '''
         unknown4 = float(LittleHex2Short(record[0:2])) / 1000.0           # unknown
         del record[0:2]
         log.debug('Unknown value #4:   %s' % (unknown4))
@@ -280,7 +282,7 @@ class BLEDelegate(DefaultDelegate):
         packpower = float(LittleHex2UInt(record[0:4])) / 1000.0              # pack power
         del record[0:4]
         log.debug('Pack power:         %s' % (packpower))
-        balancecurent = float(LittleHex2Int(record[0:4])) / 1000.0           # pack voltage
+        balancecurent = float(LittleHex2Int(record[0:4])) / 1000.0           # balance current
         del record[0:4]
         log.debug('Balance current:    %s' % (balancecurent))
         packtemp1 = float(LittleHex2Short(record[0:2])) / 10.0               # Temp. sensor #1
@@ -322,7 +324,7 @@ class BLEDelegate(DefaultDelegate):
         unknown10 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
         log.debug('Unknown value #10:  %s' % (unknown10))
-        uptime = Hex2uptime(record[0:3])                                         # uptime
+        uptime = Hex2uptime(record[0:3])                                     # uptime
         del record[0:3]
         log.debug('Uptime:             %s' % (uptime))
         unknown11 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
