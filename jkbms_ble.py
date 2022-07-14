@@ -322,7 +322,7 @@ class BLEDelegate(DefaultDelegate):
         unknown10 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
         log.debug('Unknown value #10:  %s' % (unknown10))
-        uptime = uptime(record[0:3])                                         # uptime
+        uptime = Hex2uptime(record[0:3])                                         # uptime
         del record[0:3]
         log.debug('Uptime:             %s' % (uptime))
         unknown11 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
@@ -762,7 +762,7 @@ def LittleHex2Short(hexString):
 # ---
 # Decode 3 hex bytes to a JKBMS uptime
 # ---
-def uptime(byteData):
+def Hex2uptime(byteData):
     # Make sure supplied String is the correct length
     log.debug("uptime defn")
     value = 0
