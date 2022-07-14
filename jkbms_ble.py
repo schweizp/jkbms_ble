@@ -213,32 +213,54 @@ class BLEDelegate(DefaultDelegate):
         log.debug('Volts: {}'.format(volts))
         _totalvolt = 0
         for cell, volt in enumerate(volts):
-            _volt = float(LittleHex2Short(volt))
+            _volt = float(LittleHex2Short(volt)) / 1000.0
             out['B{:d}'.format(cell+1)]=round(_volt,4)
             log.debug('Cell: {:02d}, Volts: {:.4f}'.format(cell + 1, _volt))
             #publish({'VoltageCell{:02d}'.format(cell + 1): _volt}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
-            _totalvolt += _volt
+            '''_totalvolt += _volt
             if c_high < _volt:
                 c_high= _volt
             if c_low > _volt and _volt != 0:
-                c_low=_volt
+                c_low=_volt'''
         #publish({'VoltageTotal': _totalvolt}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
-        # Process cell wire resistances
+
+        # out["Total"]= round(_totalvolt,4)
+        # out["Cell_High"]= round(c_high,4)
+        # out["Cell_Low"]= round(c_low,4)
+        # out["Cell_Diff"]= round(c_high-c_low,4)
+                
         # log.debug (record)
-        #log.debug('Processing wire resistances')
-        out["Total"]= round(_totalvolt,4)
-        out["Cell_High"]= round(c_high,4)
-        out["Cell_Low"]= round(c_low,4)
-        out["Cell_Diff"]= round(c_high-c_low,4)
+        # next 4 bytes are not known yet
+        unknown1 = float(LittleHex2Short(record[0:size])) / 1000.0           # unknown
+        del record[0:size]
+        unknown2 = float(LittleHex2Short(record[0:size])) / 1000.0           # unknown
+        del record[0:size]
+        avgcellvoltage = float(LittleHex2Short(record[0:size])) / 1000.0     # Avg. cell voltage in pack
+        del record[0:size]
+        deltacellvoltage = float(LittleHex2Short(record[0:size])) / 1000.0   # delta voltage between highest and lowest cell
+        del record[0:size]
+        balancercurrent = float(LittleHex2Short(record[0:size])) / 1000.0    # balancer current
+        del record[0:size]
+        
+        log.debug('Unknown value #1:   %' % (unknown1))
+        log.debug('Unknown value #2:   %' % (unknown2))
+        log.debug('Avg. cell voltage:  %' % (avgcellvoltage))
+        log.debug('Delta cell voltage: %' & (deltacellvoltage))
+        log.debug('Balancer current:   %' % (balancercurrent))
+        
+        # Process cell wire resistances
+        log.debug('Processing wire resistances')
+
         resistances = []
         size = 2
-        number = 25
+        number = 24
         for i in range(0, number):
             resistances.append(record[0:size])
             del record[0:size]
         for cell, resistance in enumerate(resistances):
-            out['R{:d}'.format(cell+1)]=round(LittleHex2Short(resistance),4)
-            log.debug('Cell: {:02d}, Resistance: {:.4f}'.format(cell, LittleHex2Short(resistance)))
+            _resistance = float(LittleHex2Short(resistance)) / 1000.0
+            out['R{:d}'.format(cell+1)]=round(_resistance,4)
+            log.debug('Cell: {:02d}, Resistance: {:.4f}'.format(cell, _resistance))
             #publish({'ResistanceCell{:02d}'.format(cell): float(decodeHex(resistance))}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
         # log.debug (record)'''
 
