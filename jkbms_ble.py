@@ -245,7 +245,7 @@ class BLEDelegate(DefaultDelegate):
         log.debug('Unknown value #1:   %s' % (unknown1))
         log.debug('Unknown value #2:   %s' % (unknown2))
         log.debug('Avg. cell voltage:  %s' % (avgcellvoltage))
-        log.debug('Delta cell voltage: %s' & (deltacellvoltage))
+        log.debug('Delta cell voltage: %s' % (deltacellvoltage))
         log.debug('Balancer current:   %s' % (balancercurrent))
         
         # Process cell wire resistances
