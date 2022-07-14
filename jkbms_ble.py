@@ -239,21 +239,21 @@ class BLEDelegate(DefaultDelegate):
         del record[0:size]
         deltacellvoltage = float(LittleHex2Short(record[0:size])) / 1000.0   # delta voltage between highest and lowest cell
         del record[0:size]
-        balancercurrent = float(LittleHex2Short(record[0:size])) / 1000.0    # balancer current
+        balancercurrent = float(LittleHex2Short(record[0:size])) / 1000.0    # balancer cell / current / ?
         del record[0:size]
         
         log.debug('Unknown value #1:   %s' % (unknown1))
         log.debug('Unknown value #2:   %s' % (unknown2))
         log.debug('Avg. cell voltage:  %s' % (avgcellvoltage))
         log.debug('Delta cell voltage: %s' % (deltacellvoltage))
-        log.debug('Balancer current:   %s' % (balancercurrent))
+        log.debug('Balancer cell/ current?:   %s' % (balancercurrent))
         
         # Process cell wire resistances
         log.debug('Processing wire resistances')
 
         resistances = []
         size = 2
-        number = 24
+        number = 25
         for i in range(0, number):
             resistances.append(record[0:size])
             del record[0:size]
@@ -262,8 +262,134 @@ class BLEDelegate(DefaultDelegate):
             out['R{:d}'.format(cell+1)]=round(_resistance,4)
             log.debug('Cell: {:02d}, Resistance: {:.4f}'.format(cell, _resistance))
             #publish({'ResistanceCell{:02d}'.format(cell): float(decodeHex(resistance))}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
-        # log.debug (record)'''
-
+        # log.debug (record)
+        
+        # process additional values
+        unknown3 = float(LittleHex2Short(record[0:2])) / 1000.0           # unknown
+        del record[0:2]
+        log.debug('Unknown value #3:   %s' % (unknown3))
+        unknown4 = float(LittleHex2Short(record[0:2])) / 1000.0           # unknown
+        del record[0:2]
+        log.debug('Unknown value #4:   %s' % (unknown4))
+        unknown5 = float(LittleHex2Short(record[0:2])) / 1000.0           # unknown
+        del record[0:2]
+        log.debug('Unknown value #5:   %s' % (unknown5))
+        packvoltage = float(LittleHex2UInt(record[0:4])) / 1000.0            # pack voltage
+        del record[0:4]
+        log.debug('Pack voltage:       %s' % (packvoltage))
+        packpower = float(LittleHex2UInt(record[0:4])) / 1000.0              # pack power
+        del record[0:4]
+        log.debug('Pack power:         %s' % (packpower))
+        balancecurent = float(LittleHex2Int(record[0:4])) / 1000.0           # pack voltage
+        del record[0:4]
+        log.debug('Balance current:    %s' % (balancecurent))
+        packtemp1 = float(LittleHex2Short(record[0:2])) / 10.0               # Temp. sensor #1
+        del record[0:2]
+        log.debug('T1:                 %s' % (packtemp1))
+        packtemp2 = float(LittleHex2Short(record[0:2])) / 10.0               # Temp. sensor #2
+        del record[0:2]
+        log.debug('T2:                 %s' % (packtemp2))
+        mostemp = float(LittleHex2Short(record[0:2])) / 10.0                 # MOS Temp. sensor
+        del record[0:2]
+        log.debug('MOS Temp.:          %s' % (mostemp))
+        unknown6 = float(LittleHex2Short(record[0:2])) / 1000.0              # unknown
+        del record[0:2]
+        log.debug('Unknown value #6:   %s' % (unknown6))
+        unknown7 = float(LittleHex2Short(record[0:2])) / 1000.0              # unknown
+        del record[0:2]
+        log.debug('Unknown value #7:   %s' % (unknown7))
+        unknown8 = float(Hex2Int(record[0:1])) / 1000.0                      # unknown
+        del record[0:1]
+        log.debug('Unknown value #8:   %s' % (unknown8))
+        soc = Hex2Int(record[0:1])                                           # pack SOC
+        del record[0:1]
+        log.debug('Pack SOC:   %s' % (soc))
+        caparemaining = float(LittleHex2UInt(record[0:4])) / 1000.0          # remaining capacity
+        del record[0:4]
+        log.debug('Capa remaining:     %s' % (caparemaining))
+        capanominal = float(LittleHex2UInt(record[0:4])) / 1000.0            # nominal capacity
+        del record[0:4]
+        log.debug('Capa nominal:       %s' % (capanominal))
+        cyclecount = float(LittleHex2UInt(record[0:4]))                      # cycle count
+        del record[0:4]
+        log.debug('Cycle count:        %s' % (cyclecount))
+        capacycle = float(LittleHex2UInt(record[0:4])) / 1000.0              # cycle capacity
+        del record[0:4]
+        log.debug('Capa nominal:       %s' % (capacycle))
+        unknown9 = float(LittleHex2Short(record[0:2])) / 1000.0              # unknown
+        del record[0:2]
+        log.debug('Unknown value #9:   %s' % (unknown9))
+        unknown10 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #10:  %s' % (unknown10))
+        uptime = uptime(record[0:3])                                         # uptime
+        del record[0:3]
+        log.debug('Uptime:             %s' % (uptime))
+        unknown11 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #11:  %s' % (unknown11))
+        unknown12 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #12:  %s' % (unknown12))
+        unknown13 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #13:  %s' % (unknown13))
+        unknown14 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #14:  %s' % (unknown14))
+        unknown15 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #15:  %s' % (unknown15))
+        unknown16 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #16:  %s' % (unknown16))
+        unknown17 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #17:  %s' % (unknown17))
+        unknown18 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #18:  %s' % (unknown18))
+        unknown19 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #19:  %s' % (unknown19))
+        unknown20 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #20:  %s' % (unknown20))
+        unknown21 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #21:  %s' % (unknown21))
+        unknown22 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #22:  %s' % (unknown22))
+        charge = float(LittleHex2Short(record[0:2])) / 1000.0                # charge?
+        del record[0:2]
+        log.debug('Charge?:            %s' % (charge))
+        discharge = float(LittleHex2Short(record[0:2])) / 1000.0             # discharge?
+        del record[0:2]
+        log.debug('Discharge?:         %s' % (discharge))
+        unknown23 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #23:  %s' % (unknown23))
+        unknown24 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #24:  %s' % (unknown24))
+        unknown25 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #25:  %s' % (unknown25))
+        unknown26 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #26:  %s' % (unknown26))
+        unknown27 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #27:  %s' % (unknown27))
+        unknown28 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #28:  %s' % (unknown28))
+        unknown29 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
+        del record[0:2]
+        log.debug('Unknown value #29:  %s' % (unknown29))
+        # further 93 bytes ignored for the moment...
+        
 
     def processCellDataRecord04(self, record):       # 4 Byte Format
         log.debug('Processing cell data record')
@@ -586,6 +712,40 @@ def crc8(byteData):
         CRC &= 0xff
     return CRC
 
+# ---
+# Decode the first byte of a hexString to int
+# ---
+def Hex2Int(hexString):
+    answer = hexString[0]
+    log.debug(f"Hex {hexString} decoded to {answer}")
+
+    return answer
+
+# ---
+# Decode a 4 byte hexString to int (little endian coded)
+# ---
+def LittleHex2Int(hexString):
+    # Make sure supplied String is the correct length
+    if len(hexString) != 4:
+        log.info(f"Hex encoded value must be 4 bytes long. Was {len(hexString)} length")
+        return 0
+
+    answer = unpack("<i", hexString)[0]
+    log.debug(f"Hex {hexString} 4 byte decoded to {answer}")
+    return answer
+
+# ---
+# Decode a 4 byte hexString to Uint (little endian coded)
+# ---
+def LittleHex2UInt(hexString):
+    # Make sure supplied String is the correct length
+    if len(hexString) != 4:
+        log.info(f"Hex encoded value must be 4 bytes long. Was {len(hexString)} length")
+        return 0
+
+    answer = unpack("<I", hexString)[0]
+    log.debug(f"Hex {hexString} 4 byte decoded to {answer}")
+    return answer
 
 # ---
 # Decode a 2 byte hexString to int (little endian coded)
@@ -599,6 +759,28 @@ def LittleHex2Short(hexString):
     log.debug(f"Hex {hexString} 2 byte decoded to {answer}")
     return answer
 
+# ---
+# Decode 3 hex bytes to a JKBMS uptime
+# ---
+def uptime(byteData):
+    # Make sure supplied String is the correct length
+    log.debug("uptime defn")
+    value = 0
+    for x, b in enumerate(byteData):
+        # b = byteData.pop(0)
+        value += b * 256 ** x
+        log.debug(f"Uptime int value {value} for pos {x}")
+    daysFloat = value / (60 * 60 * 24)
+    days = math.trunc(daysFloat)
+    hoursFloat = (daysFloat - days) * 24
+    hours = math.trunc(hoursFloat)
+    minutesFloat = (hoursFloat - hours) * 60
+    minutes = math.trunc(minutesFloat)
+    secondsFloat = (minutesFloat - minutes) * 60
+    seconds = round(secondsFloat)
+    uptime = f"{days}D{hours}H{minutes}M{seconds}S"
+    log.info(f"Uptime result {uptime}")
+    return uptime
 
 # ---
 #  decodeHex values
