@@ -193,7 +193,56 @@ class BLEDelegate(DefaultDelegate):
         counter = record.pop(0)
         log.debug('Record number: {}'.format(counter))
 
-    def processCellDataRecord(self, record):
+    def processCellDataRecord02(self, record):      # 2 Byte Format
+        log.debug('Processing 2 Byte cell data record')
+        log.debug('Record length {}'.format(len(record)))
+        del record[0:5]
+        counter = record.pop(0)
+        log.debug('Record number: {}'.format(counter))
+        # Process cell voltages
+        volts = []
+        size = 2                # changed from 4 to 2
+        number = 24
+        c_high=0
+        c_low=10
+        c_diff=0
+        for i in range(0, number):
+            volts.append(record[0:size])
+            del record[0:size]
+        log.debug('Volts: {}'.format(volts))
+        '''_totalvolt = 0
+        for cell, volt in enumerate(volts):
+            _volt = float(decodeHex(volt))
+            out['B{:d}'.format(cell+1)]=round(_volt,4)
+            log.debug('Cell: {:02d}, Volts: {:.4f}'.format(cell + 1, _volt))
+            #publish({'VoltageCell{:02d}'.format(cell + 1): _volt}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
+            _totalvolt += _volt
+            if c_high < _volt:
+                c_high= _volt
+            if c_low > _volt and _volt != 0:
+                c_low=_volt
+        #publish({'VoltageTotal': _totalvolt}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
+        # Process cell wire resistances
+        # log.debug (record)
+        #log.debug('Processing wire resistances')
+        out["Total"]= round(_totalvolt,4)
+        out["Cell_High"]= round(c_high,4)
+        out["Cell_Low"]= round(c_low,4)
+        out["Cell_Diff"]= round(c_high-c_low,4)
+        resistances = []
+        size = 4
+        number = 25
+        for i in range(0, number):
+            resistances.append(record[0:size])
+            del record[0:size]
+        for cell, resistance in enumerate(resistances):
+            out['R{:d}'.format(cell+1)]=round(decodeHex(resistance),4)
+            log.debug('Cell: {:02d}, Resistance: {:.4f}'.format(cell, decodeHex(resistance)))
+            #publish({'ResistanceCell{:02d}'.format(cell): float(decodeHex(resistance))}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
+        # log.debug (record)'''
+
+
+    def processCellDataRecord04(self, record):       # 4 Byte Format
         log.debug('Processing cell data record')
         log.debug('Record length {}'.format(len(record)))
         del record[0:5]
@@ -249,7 +298,7 @@ class BLEDelegate(DefaultDelegate):
         elif recordType == EXTENDED_RECORD:
             self.processExtendedRecord(record)
         elif recordType == CELL_DATA:
-            self.processCellDataRecord(record)
+            self.processCellDataRecord02(record)
         else:
             log.debug('Unknown record type')
 
