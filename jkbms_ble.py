@@ -210,9 +210,9 @@ class BLEDelegate(DefaultDelegate):
             volts.append(record[0:size])
             del record[0:size]
         log.debug('Volts: {}'.format(volts))
-        '''_totalvolt = 0
+        _totalvolt = 0
         for cell, volt in enumerate(volts):
-            _volt = float(decodeHex(volt))
+            _volt = float(LittleHex2Short(volt))
             out['B{:d}'.format(cell+1)]=round(_volt,4)
             log.debug('Cell: {:02d}, Volts: {:.4f}'.format(cell + 1, _volt))
             #publish({'VoltageCell{:02d}'.format(cell + 1): _volt}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
@@ -230,14 +230,14 @@ class BLEDelegate(DefaultDelegate):
         out["Cell_Low"]= round(c_low,4)
         out["Cell_Diff"]= round(c_high-c_low,4)
         resistances = []
-        size = 4
+        size = 2
         number = 25
         for i in range(0, number):
             resistances.append(record[0:size])
             del record[0:size]
         for cell, resistance in enumerate(resistances):
-            out['R{:d}'.format(cell+1)]=round(decodeHex(resistance),4)
-            log.debug('Cell: {:02d}, Resistance: {:.4f}'.format(cell, decodeHex(resistance)))
+            out['R{:d}'.format(cell+1)]=round(LittleHex2Short(resistance),4)
+            log.debug('Cell: {:02d}, Resistance: {:.4f}'.format(cell, LittleHex2Short(resistance)))
             #publish({'ResistanceCell{:02d}'.format(cell): float(decodeHex(resistance))}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
         # log.debug (record)'''
 
@@ -562,6 +562,19 @@ def crc8(byteData):
         CRC = CRC + b
         CRC &= 0xff
     return CRC
+
+
+# ---
+# Decode a 2 byte hexString to int (little endian coded)
+# ---
+def LittleHex2Short(hexString):
+    # Make sure supplied String is the correct length
+    if len(hexString) != 2:
+        log.info(f"Hex encoded value must be 2 bytes long. Was {len(hexString)} length")
+        return 0
+    answer = unpack("<h", hexString)[0]
+    log.debug(f"Hex {hexString} 2 byte decoded to {answer}")
+    return answer
 
 
 # ---
