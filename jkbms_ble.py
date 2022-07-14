@@ -49,7 +49,7 @@ class BLEDelegate(DefaultDelegate):
     def recordIsComplete(self):
         '''
         '''
-        log.debug('Notification Data {}'.format(self.notificationData))
+        # log.debug('Notification Data {}'.format(self.notificationData))
         # check for 'ack' record
         if self.notificationData.startswith(bytes.fromhex('aa5590eb')):
             log.debug('notificationData has ACK')
@@ -196,7 +196,7 @@ class BLEDelegate(DefaultDelegate):
 
     def processCellDataRecord02(self, record):      # 2 Byte Format
         log.debug('Processing 2 Byte cell data record')
-        log.debug('Record length {}'.format(len(record)))
+        # log.debug('Record length {}'.format(len(record)))
         del record[0:5]
         counter = record.pop(0)
         log.debug('Record number: {}'.format(counter))
@@ -210,7 +210,7 @@ class BLEDelegate(DefaultDelegate):
         for i in range(0, number):
             volts.append(record[0:size])
             del record[0:size]
-        log.debug('Volts: {}'.format(volts))
+        # log.debug('Volts: {}'.format(volts))
         _totalvolt = 0
         for cell, volt in enumerate(volts):
             _volt = float(LittleHex2Short(volt)) / 1000.0
@@ -317,7 +317,7 @@ class BLEDelegate(DefaultDelegate):
         log.debug('Cycle count:        %s' % (cyclecount))
         capacycle = float(LittleHex2UInt(record[0:4])) / 1000.0              # cycle capacity
         del record[0:4]
-        log.debug('Capa nominal:       %s' % (capacycle))
+        log.debug('Capa cycled:       %s' % (capacycle))
         unknown9 = float(LittleHex2Short(record[0:2])) / 1000.0              # unknown
         del record[0:2]
         log.debug('Unknown value #9:   %s' % (unknown9))
@@ -597,7 +597,7 @@ class jkbms:
                 self.device.connect(self.mac)
                 log.debug('connected')
                 self.device.setMTU(330)    # line copied from mpp-solar project (reason?)
-                log.debug('MTU set')
+                # log.debug('MTU set')
                 connected = True
             except Exception:
                 time.sleep(2)     # wait 2s before next connection attempt
@@ -637,18 +637,18 @@ class jkbms:
         # Read
         characteristicReadUuid = 'ffe1'     #'ffe3' seems to be an "old" value
         characteristicRead = serviceNotify.getCharacteristics(characteristicReadUuid)
-        log.debug('read char. %s' % (characteristicRead))
-        log.debug('read char. [0] %s' % (characteristicRead[0]))
+        # log.debug('read char. %s' % (characteristicRead))
+        # log.debug('read char. [0] %s' % (characteristicRead[0]))
         handleRead = characteristicRead[0].getHandle()
-        log.debug('Read characteristic: {}, handle {:x}'.format(characteristicRead[0], handleRead))
+        # log.debug('Read characteristic: {}, handle {:x}'.format(characteristicRead[0], handleRead))
 
         # ## TODO sort below
         # Need to dynamically find this handle....
-        log.debug('Enable 0x0b handle', self.device.writeCharacteristic(0x0b, b'\x01\x00'))
+        # log.debug('Enable 0x0b handle', self.device.writeCharacteristic(0x0b, b'\x01\x00'))
         self.device.writeCharacteristic(0x0b, b'\x01\x00')
-        log.debug('Enable read handle', self.device.writeCharacteristic(handleRead, b'\x01\x00'))
+        # log.debug('Enable read handle', self.device.writeCharacteristic(handleRead, b'\x01\x00'))
         self.device.writeCharacteristic(handleRead, b'\x01\x00')
-        log.debug('Write getInfo to read handle', self.device.writeCharacteristic(handleRead, getInfo))
+        # log.debug('Write getInfo to read handle', self.device.writeCharacteristic(handleRead, getInfo))
         self.device.writeCharacteristic(handleRead, getInfo)
         secs = 0
         while True:
@@ -658,16 +658,16 @@ class jkbms:
             if secs > 5:
                 break
 
-        log.debug('Write getCellInfo to read handle', self.device.writeCharacteristic(handleRead, getCellInfo))
+        # log.debug('Write getCellInfo to read handle', self.device.writeCharacteristic(handleRead, getCellInfo))
         self.device.writeCharacteristic(handleRead, getCellInfo)
         loops = 0
         recordsToGrab = self.records
-        log.debug('Grabbing {} records (after inital response)'.format(recordsToGrab))
+        # log.debug('Grabbing {} records (after inital response)'.format(recordsToGrab))
 
         while True:
             loops += 1
             if loops > recordsToGrab * 15 + 16:
-                log.debug('Got {} records'.format(recordsToGrab))
+                # log.debug('Got {} records'.format(recordsToGrab))
                 break
             if self.device.waitForNotifications(1.0):
                 continue
@@ -719,7 +719,7 @@ def crc8(byteData):
 # ---
 def Hex2Int(hexString):
     answer = hexString[0]
-    log.debug(f"Hex {hexString} decoded to {answer}")
+    # log.debug(f"Hex {hexString} decoded to {answer}")
 
     return answer
 
@@ -733,7 +733,7 @@ def LittleHex2Int(hexString):
         return 0
 
     answer = unpack("<i", hexString)[0]
-    log.debug(f"Hex {hexString} 4 byte decoded to {answer}")
+    # log.debug(f"Hex {hexString} 4 byte decoded to {answer}")
     return answer
 
 # ---
@@ -746,7 +746,7 @@ def LittleHex2UInt(hexString):
         return 0
 
     answer = unpack("<I", hexString)[0]
-    log.debug(f"Hex {hexString} 4 byte decoded to {answer}")
+    # log.debug(f"Hex {hexString} 4 byte decoded to {answer}")
     return answer
 
 # ---
@@ -758,7 +758,7 @@ def LittleHex2Short(hexString):
         log.info(f"Hex encoded value must be 2 bytes long. Was {len(hexString)} length")
         return 0
     answer = unpack("<h", hexString)[0]
-    log.debug(f"Hex {hexString} 2 byte decoded to {answer}")
+    # log.debug(f"Hex {hexString} 2 byte decoded to {answer}")
     return answer
 
 # ---
@@ -766,12 +766,12 @@ def LittleHex2Short(hexString):
 # ---
 def Hex2uptime(byteData):
     # Make sure supplied String is the correct length
-    log.debug("uptime defn")
+    # log.debug("uptime defn")
     value = 0
     for x, b in enumerate(byteData):
         # b = byteData.pop(0)
         value += b * 256 ** x
-        log.debug(f"Uptime int value {value} for pos {x}")
+        # log.debug(f"Uptime int value {value} for pos {x}")
     daysFloat = value / (60 * 60 * 24)
     days = math.trunc(daysFloat)
     hoursFloat = (daysFloat - days) * 24
@@ -781,7 +781,7 @@ def Hex2uptime(byteData):
     secondsFloat = (minutesFloat - minutes) * 60
     seconds = round(secondsFloat)
     uptime = f"{days}D{hours}H{minutes}M{seconds}S"
-    log.info(f"Uptime result {uptime}")
+    log.debug(f"Uptime result {uptime}")
     return uptime
 
 # ---
@@ -794,9 +794,7 @@ def decodeHex(hexToDecode):
     # hexString = bytes.fromhex(hexToDecode)
     hexString = hexToDecode
     log.debug('hexString: {}'.format(hexString))
-
     answer = 0.0
-
     # Make sure supplied String is long enough
     if len(hexString) != 4:
         log.info('Hex encoded value must be 4 bytes long. Was {} length'.format(len(hexString)))
