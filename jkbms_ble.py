@@ -29,6 +29,7 @@ from paho.mqtt.client import MQTT_ERR_NO_CONN
 from paho.mqtt.client import MQTT_ERR_QUEUE_SIZE
 
 from collections import OrderedDict
+from struct import unpack
 
 
 # delegate class for BLE
