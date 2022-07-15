@@ -274,10 +274,10 @@ class BLEDelegate(DefaultDelegate):
         del record[0:4]
         # log.debug('Pack power:         %s' % (packpower))
         mqttClient.publish(self.jkbms.tag + '/CellData/PackPower', packpower)
-        balancecurent = float(LittleHex2Int(record[0:4])) / 1000.0           # balance current
+        packcurrent = float(LittleHex2Int(record[0:4])) / 1000.0           # pack current
         del record[0:4]
         # log.debug('Balance current:    %s' % (balancecurent))
-        mqttClient.publish(self.jkbms.tag + '/CellData/BalanceCurrent', balancecurent)
+        mqttClient.publish(self.jkbms.tag + '/CellData/PackCurrent', packcurrent)
         packtemp1 = float(LittleHex2Short(record[0:2])) / 10.0               # Temp. sensor #1
         del record[0:2]
         # log.debug('T1:                 %s' % (packtemp1))
