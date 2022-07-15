@@ -217,21 +217,8 @@ class BLEDelegate(DefaultDelegate):
             out['B{:d}'.format(cell+1)]=round(_volt,4)
             log.debug('Cell: {:02d}, Volts: {:.4f}'.format(cell + 1, _volt))
             mqttClient.publish(self.jkbms.tag + '/CellData/VoltageCell_{:02d}'.format(cell+1), _volt)
-            #publish({'VoltageCell{:02d}'.format(cell + 1): _volt}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
-            '''_totalvolt += _volt
-            if c_high < _volt:
-                c_high= _volt
-            if c_low > _volt and _volt != 0:
-                c_low=_volt'''
-        #publish({'VoltageTotal': _totalvolt}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
-
-        # out["Total"]= round(_totalvolt,4)
-        # out["Cell_High"]= round(c_high,4)
-        # out["Cell_Low"]= round(c_low,4)
-        # out["Cell_Diff"]= round(c_high-c_low,4)
                 
         # log.debug (record)
-        # next 4 bytes are not known yet
         unknown1 = float(LittleHex2Short(record[0:size])) / 1000.0           # unknown
         del record[0:size]
         unknown2 = float(LittleHex2Short(record[0:size])) / 1000.0           # unknown
@@ -246,8 +233,11 @@ class BLEDelegate(DefaultDelegate):
         log.debug('Unknown value #1:   %s' % (unknown1))
         log.debug('Unknown value #2:   %s' % (unknown2))
         log.debug('Avg. cell voltage:  %s' % (avgcellvoltage))
+        mqttClient.publish(self.jkbms.tag + '/CellData/AvgCellVoltage', avgcellvoltage)
         log.debug('Delta cell voltage: %s' % (deltacellvoltage))
+        mqttClient.publish(self.jkbms.tag + '/CellData/DeltaCellVoltage', deltacellvoltage)
         log.debug('Balancer cell/ current?:   %s' % (balancercurrent))
+        mqttClient.publish(self.jkbms.tag + '/CellData/BalancerCurrent', balancercurrent)
         
         # Process cell wire resistances
         log.debug('Processing wire resistances')
@@ -262,8 +252,7 @@ class BLEDelegate(DefaultDelegate):
             _resistance = float(LittleHex2Short(resistance)) / 1000.0
             out['R{:d}'.format(cell+1)]=round(_resistance,4)
             log.debug('Cell: {:02d}, Resistance: {:.4f}'.format(cell, _resistance))
-            #publish({'ResistanceCell{:02d}'.format(cell): float(decodeHex(resistance))}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
-        # log.debug (record)
+            mqttClient.publish(self.jkbms.tag + '/CellData/ResistanceCell_{:02d}'.format(cell), _resistance)
         
         # process additional values
         '''
