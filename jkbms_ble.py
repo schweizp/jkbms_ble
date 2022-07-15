@@ -215,7 +215,7 @@ class BLEDelegate(DefaultDelegate):
         for cell, volt in enumerate(volts):
             _volt = float(LittleHex2Short(volt)) / 1000.0
             out['B{:d}'.format(cell+1)]=round(_volt,4)
-            log.debug('Cell: {:02d}, Volts: {:.4f}'.format(cell + 1, _volt))
+            # log.debug('Cell: {:02d}, Volts: {:.4f}'.format(cell + 1, _volt))
             mqttClient.publish(self.jkbms.tag + '/CellData/VoltageCell_{:02d}'.format(cell+1), _volt)
                 
         # log.debug (record)
@@ -230,17 +230,17 @@ class BLEDelegate(DefaultDelegate):
         balancercurrent = float(LittleHex2Short(record[0:size])) / 1000.0    # balancer cell / current / ?
         del record[0:size]
         
-        log.debug('Unknown value #1:   %s' % (unknown1))
-        log.debug('Unknown value #2:   %s' % (unknown2))
-        log.debug('Avg. cell voltage:  %s' % (avgcellvoltage))
+        # log.debug('Unknown value #1:   %s' % (unknown1))
+        # log.debug('Unknown value #2:   %s' % (unknown2))
+        # log.debug('Avg. cell voltage:  %s' % (avgcellvoltage))
         mqttClient.publish(self.jkbms.tag + '/CellData/AvgCellVoltage', avgcellvoltage)
-        log.debug('Delta cell voltage: %s' % (deltacellvoltage))
+        # log.debug('Delta cell voltage: %s' % (deltacellvoltage))
         mqttClient.publish(self.jkbms.tag + '/CellData/DeltaCellVoltage', deltacellvoltage)
-        log.debug('Balancer cell/ current?:   %s' % (balancercurrent))
+        # log.debug('Balancer cell/ current?:   %s' % (balancercurrent))
         mqttClient.publish(self.jkbms.tag + '/CellData/BalancerCurrent', balancercurrent)
         
         # Process cell wire resistances
-        log.debug('Processing wire resistances')
+        # log.debug('Processing wire resistances')
 
         resistances = []
         size = 2
@@ -251,147 +251,148 @@ class BLEDelegate(DefaultDelegate):
         for cell, resistance in enumerate(resistances):
             _resistance = float(LittleHex2Short(resistance)) / 1000.0
             out['R{:d}'.format(cell+1)]=round(_resistance,4)
-            log.debug('Cell: {:02d}, Resistance: {:.4f}'.format(cell, _resistance))
+            # log.debug('Cell: {:02d}, Resistance: {:.4f}'.format(cell, _resistance))
             mqttClient.publish(self.jkbms.tag + '/CellData/ResistanceCell_{:02d}'.format(cell), _resistance)
         
         # process additional values
         '''
         unknown3 = float(LittleHex2Short(record[0:2])) / 1000.0           # unknown
         del record[0:2]
-        log.debug('Unknown value #3:   %s' % (unknown3))
+        # log.debug('Unknown value #3:   %s' % (unknown3))
         '''
         unknown4 = float(LittleHex2Short(record[0:2])) / 1000.0           # unknown
         del record[0:2]
-        log.debug('Unknown value #4:   %s' % (unknown4))
+        # log.debug('Unknown value #4:   %s' % (unknown4))
         unknown5 = float(LittleHex2Short(record[0:2])) / 1000.0           # unknown
         del record[0:2]
-        log.debug('Unknown value #5:   %s' % (unknown5))
+        # log.debug('Unknown value #5:   %s' % (unknown5))
         packvoltage = float(LittleHex2UInt(record[0:4])) / 1000.0            # pack voltag
         del record[0:4]
-        log.debug('Pack voltage:       %s' % (packvoltage))
+        # log.debug('Pack voltage:       %s' % (packvoltage))
         mqttClient.publish(self.jkbms.tag + '/CellData/PackVoltage', packvoltage)
         packpower = float(LittleHex2UInt(record[0:4])) / 1000.0              # pack power
         del record[0:4]
-        log.debug('Pack power:         %s' % (packpower))
+        # log.debug('Pack power:         %s' % (packpower))
         mqttClient.publish(self.jkbms.tag + '/CellData/PackPower', packpower)
         balancecurent = float(LittleHex2Int(record[0:4])) / 1000.0           # balance current
         del record[0:4]
-        log.debug('Balance current:    %s' % (balancecurent))
+        # log.debug('Balance current:    %s' % (balancecurent))
         mqttClient.publish(self.jkbms.tag + '/CellData/BalanceCurrent', balancecurent)
         packtemp1 = float(LittleHex2Short(record[0:2])) / 10.0               # Temp. sensor #1
         del record[0:2]
-        log.debug('T1:                 %s' % (packtemp1))
+        # log.debug('T1:                 %s' % (packtemp1))
         mqttClient.publish(self.jkbms.tag + '/CellData/PackTemp_1', packtemp1)
         packtemp2 = float(LittleHex2Short(record[0:2])) / 10.0               # Temp. sensor #2
         del record[0:2]
-        log.debug('T2:                 %s' % (packtemp2))
+        # log.debug('T2:                 %s' % (packtemp2))
         mqttClient.publish(self.jkbms.tag + '/CellData/PackTemp_2', packtemp2)
         mostemp = float(LittleHex2Short(record[0:2])) / 10.0                 # MOS Temp. sensor
         del record[0:2]
-        log.debug('MOS Temp.:          %s' % (mostemp))
+        # log.debug('MOS Temp.:          %s' % (mostemp))
         mqttClient.publish(self.jkbms.tag + '/CellData/MOSTemp', mostemp)
         unknown6 = float(LittleHex2Short(record[0:2])) / 1000.0              # unknown
         del record[0:2]
-        log.debug('Unknown value #6:   %s' % (unknown6))
+        # log.debug('Unknown value #6:   %s' % (unknown6))
         unknown7 = float(LittleHex2Short(record[0:2])) / 1000.0              # unknown
         del record[0:2]
-        log.debug('Unknown value #7:   %s' % (unknown7))
+        # log.debug('Unknown value #7:   %s' % (unknown7))
         unknown8 = float(Hex2Int(record[0:1])) / 1000.0                      # unknown
         del record[0:1]
-        log.debug('Unknown value #8:   %s' % (unknown8))
+        # log.debug('Unknown value #8:   %s' % (unknown8))
         soc = Hex2Int(record[0:1])                                           # pack SOC
         del record[0:1]
-        log.debug('Pack SOC:   %s' % (soc))
+        # log.debug('Pack SOC:   %s' % (soc))
         mqttClient.publish(self.jkbms.tag + '/CellData/PackSOC', soc)
         caparemaining = float(LittleHex2UInt(record[0:4])) / 1000.0          # remaining capacity
         del record[0:4]
-        log.debug('Capa remaining:     %s' % (caparemaining))
+        # log.debug('Capa remaining:     %s' % (caparemaining))
         capanominal = float(LittleHex2UInt(record[0:4])) / 1000.0            # nominal capacity
         del record[0:4]
-        log.debug('Capa nominal:       %s' % (capanominal))
+        # log.debug('Capa nominal:       %s' % (capanominal))
         mqttClient.publish(self.jkbms.tag + '/CellData/CapaNominal', capanominal)
         cyclecount = float(LittleHex2UInt(record[0:4]))                      # cycle count
         del record[0:4]
-        log.debug('Cycle count:        %s' % (cyclecount))
+        # log.debug('Cycle count:        %s' % (cyclecount))
         mqttClient.publish(self.jkbms.tag + '/CellData/CycleCount', cyclecount)
         capacycle = float(LittleHex2UInt(record[0:4])) / 1000.0              # cycle capacity
         del record[0:4]
-        log.debug('Capa cycled:       %s' % (capacycle))
+        # log.debug('Capa cycled:       %s' % (capacycle))
         mqttClient.publish(self.jkbms.tag + '/CellData/CapaCycled', capacycle)
         unknown9 = float(LittleHex2Short(record[0:2])) / 1000.0              # unknown
         del record[0:2]
-        log.debug('Unknown value #9:   %s' % (unknown9))
+        # log.debug('Unknown value #9:   %s' % (unknown9))
         unknown10 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #10:  %s' % (unknown10))
+        # log.debug('Unknown value #10:  %s' % (unknown10))
         uptime = Hex2uptime(record[0:3])                                     # uptime
         del record[0:3]
-        log.debug('Uptime:             %s' % (uptime))
+        # log.debug('Uptime:             %s' % (uptime))
+        mqttClient.publish(self.jkbms.tag + '/CellData/BMSUptime', uptime)
         unknown11 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #11:  %s' % (unknown11))
+        # log.debug('Unknown value #11:  %s' % (unknown11))
         unknown12 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #12:  %s' % (unknown12))
+        # log.debug('Unknown value #12:  %s' % (unknown12))
         unknown13 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #13:  %s' % (unknown13))
+        # log.debug('Unknown value #13:  %s' % (unknown13))
         unknown14 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #14:  %s' % (unknown14))
+        # log.debug('Unknown value #14:  %s' % (unknown14))
         unknown15 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #15:  %s' % (unknown15))
+        # log.debug('Unknown value #15:  %s' % (unknown15))
         unknown16 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #16:  %s' % (unknown16))
+        # log.debug('Unknown value #16:  %s' % (unknown16))
         unknown17 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #17:  %s' % (unknown17))
+        # log.debug('Unknown value #17:  %s' % (unknown17))
         unknown18 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #18:  %s' % (unknown18))
+        # log.debug('Unknown value #18:  %s' % (unknown18))
         unknown19 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #19:  %s' % (unknown19))
+        # log.debug('Unknown value #19:  %s' % (unknown19))
         unknown20 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #20:  %s' % (unknown20))
+        # log.debug('Unknown value #20:  %s' % (unknown20))
         unknown21 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #21:  %s' % (unknown21))
+        # log.debug('Unknown value #21:  %s' % (unknown21))
         unknown22 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #22:  %s' % (unknown22))
+        # log.debug('Unknown value #22:  %s' % (unknown22))
         charge = float(LittleHex2Short(record[0:2])) / 1000.0                # charge?
         del record[0:2]
-        log.debug('Charge?:            %s' % (charge))
+        # log.debug('Charge?:            %s' % (charge))
         mqttClient.publish(self.jkbms.tag + '/CellData/ChargeCurrent', charge)
         discharge = float(LittleHex2Short(record[0:2])) / 1000.0             # discharge?
         del record[0:2]
-        log.debug('Discharge?:         %s' % (discharge))
+        # log.debug('Discharge?:         %s' % (discharge))
         mqttClient.publish(self.jkbms.tag + '/CellData/DischargeCurrent', discharge)
         unknown23 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #23:  %s' % (unknown23))
+        # log.debug('Unknown value #23:  %s' % (unknown23))
         unknown24 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #24:  %s' % (unknown24))
+        # log.debug('Unknown value #24:  %s' % (unknown24))
         unknown25 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #25:  %s' % (unknown25))
+        # log.debug('Unknown value #25:  %s' % (unknown25))
         unknown26 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #26:  %s' % (unknown26))
+        # log.debug('Unknown value #26:  %s' % (unknown26))
         unknown27 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #27:  %s' % (unknown27))
+        # log.debug('Unknown value #27:  %s' % (unknown27))
         unknown28 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #28:  %s' % (unknown28))
+        # log.debug('Unknown value #28:  %s' % (unknown28))
         unknown29 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
-        log.debug('Unknown value #29:  %s' % (unknown29))
+        # log.debug('Unknown value #29:  %s' % (unknown29))
         # further 93 bytes ignored for the moment...
         
 
@@ -653,12 +654,12 @@ class jkbms:
         # log.debug('Write getInfo to read handle', self.device.writeCharacteristic(handleRead, getInfo))
         self.device.writeCharacteristic(handleRead, getInfo)
         secs = 0
-        while True:
+        '''while True:
             if self.device.waitForNotifications(1.0):
                 continue
             secs += 1
             if secs > 5:
-                break
+                break'''
 
         # log.debug('Write getCellInfo to read handle', self.device.writeCharacteristic(handleRead, getCellInfo))
         self.device.writeCharacteristic(handleRead, getCellInfo)
@@ -666,13 +667,13 @@ class jkbms:
         recordsToGrab = self.records
         # log.debug('Grabbing {} records (after inital response)'.format(recordsToGrab))
 
-        while True:
+        '''while True:
             loops += 1
             if loops > recordsToGrab * 15 + 16:
                 # log.debug('Got {} records'.format(recordsToGrab))
                 break
             if self.device.waitForNotifications(1.0):
-                continue
+                continue'''
 
     def disconnect(self):
         log.debug('Disconnecting...')
