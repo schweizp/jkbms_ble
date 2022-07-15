@@ -166,8 +166,10 @@ class BLEDelegate(DefaultDelegate):
                 passCode += bytes(_int.to_bytes(1, byteorder='big'))
 
         log.debug('VendorID: {}'.format(vendorID.decode('utf-8')))
+        mqttClient.publish(self.jkbms.tag + 'Info/VendorID', vendorID.decode('utf-8'))
         #publish({'VendorID': vendorID.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
         log.debug('Device Name: {}'.format(deviceName.decode('utf-8')))
+        mqttClient.publish(self.jkbms.tag + 'Info/Device Name', deviceName.decode('utf-8'))
         #publish({'DeviceName': deviceName.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
         log.debug('Pass Code: {}'.format(passCode.decode('utf-8')))
         # #publish({'PassCode': passCode.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker)
@@ -539,8 +541,8 @@ model = 'JK-B2A24S'
 mac = 'C8:47:8C:E2:81:41'
 # max = 'C8:47:8C:E2:92:0C'
 command = 'command'
-tag = 'JKBMS_CellData_top'
-# tag = 'JKBMS_CellData_bot'
+tag = 'JKBMS_top'
+# tag = 'JKBMS_bot'
 format = 'mqtt'
 
 out=dict()
@@ -781,7 +783,7 @@ def Hex2uptime(byteData):
     secondsFloat = (minutesFloat - minutes) * 60
     seconds = round(secondsFloat)
     uptime = f"{days}D{hours}H{minutes}M{seconds}S"
-    log.debug(f"Uptime result {uptime}")
+    # log.debug(f"Uptime result {uptime}")
     return uptime
 
 # ---
