@@ -137,7 +137,7 @@ class BLEDelegate(DefaultDelegate):
         while _int == 0x00:
             _int = record.pop(0)
         # power up times
-        powerUpTimes = _int
+        powerCycle = _int
         # consume remaining null bytes
         _int = record.pop(0)
         while _int == 0x00:
@@ -167,16 +167,14 @@ class BLEDelegate(DefaultDelegate):
 
         log.debug('VendorID: {}'.format(vendorID.decode('utf-8')))
         mqttClient.publish(self.jkbms.tag + '/Info/VendorID', vendorID.decode('utf-8'))
-        #publish({'VendorID': vendorID.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
         log.debug('Device Name: {}'.format(deviceName.decode('utf-8')))
-        mqttClient.publish(self.jkbms.tag + '/Info/Device Name', deviceName.decode('utf-8'))
-        #publish({'DeviceName': deviceName.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
+        mqttClient.publish(self.jkbms.tag + '/Info/DeviceName', deviceName.decode('utf-8'))
         log.debug('Pass Code: {}'.format(passCode.decode('utf-8')))
-        # #publish({'PassCode': passCode.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker)
+        # mqttClient.publish(self.jkbms.tag + '/Info/PassCode', passCode.decode('utf-8'))
         log.debug('Hardware Version: {}'.format(hardwareVersion.decode('utf-8')))
-        #publish({'HardwareVersion': hardwareVersion.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
+        mqttClient.publish(self.jkbms.tag + '/Info/HardwareVersion', hardwareVersion.decode('utf-8'))
         log.debug('Software Version: {}'.format(softwareVersion.decode('utf-8')))
-        #publish({'SoftwareVersion': softwareVersion.decode('utf-8')}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
+        mqttClient.publish(self.jkbms.tag + '/Info/SoftwareVersion', softwareVersion.decode('utf-8'))
         daysFloat = uptime / (60 * 60 * 24)
         days = math.trunc(daysFloat)
         hoursFloat = (daysFloat - days) * 24
@@ -186,10 +184,10 @@ class BLEDelegate(DefaultDelegate):
         secondsFloat = (minutesFloat - minutes) * 60
         seconds = math.trunc(secondsFloat)
         log.debug('Uptime: {}D{}H{}M{}S'.format(days, hours, minutes, seconds))
-        #publish({'Uptime': '{}D{}H{}M{}S'.format(days, hours, minutes, seconds)}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
-        log.debug('Power Up Times: {}'.format(powerUpTimes))
-        #publish({'Power Up Times: {}'.format(powerUpTimes)}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
-
+        # mqttClient.publish(self.jkbms.tag + '/Info/Uptime', deviceName.decode('utf-8'))
+        log.debug('Power Up Times: {}'.format(powerCycle))
+        mqttClient.publish(self.jkbms.tag + '/Info/PowerCycle', powerCycle.decode('utf-8'))
+        
     def processExtendedRecord(self, record):
         log.debug('Processing extended record')
         del record[0:5]
