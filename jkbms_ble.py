@@ -536,14 +536,11 @@ INFO_RECORD = 3
 getInfo = b'\xaa\x55\x90\xeb\x97\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x11'
 getCellInfo = b'\xaa\x55\x90\xeb\x96\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10'
 
-name = 'JKBMS-Top'
-# name = 'JKBMS-Bottom'
+namelist = ['JKBMS-Top', 'JKBMS-Bottom']
 model = 'JK-B2A24S'
-mac = 'C8:47:8C:E2:81:41'
-# max = 'C8:47:8C:E2:92:0C'
+maclist = ['C8:47:8C:E2:81:41', 'C8:47:8C:E2:92:0C']
 command = 'command'
-tag = 'JKBMS_top'
-# tag = 'JKBMS_bot'
+taglist = ['JKBMS_top', 'JKBMS_bot']
 format = 'mqtt'
 
 out=dict()
@@ -882,7 +879,8 @@ mqttClient = mqtt.Client()
 mqttClient.on_connect = on_connect
 mqttClient.on_message = on_message
 
-mqttClient.enable_logger(logger=log)
+# mqttClient.enable_logger(logger=log)
+mqttClient.disable_logger()
 mqttClient.connect(BROKER, PORT)
 mqttClient.loop_start()
 
@@ -900,28 +898,23 @@ if __name__ == "__main__":
         time.sleep(10)      # wait 10s to give mqtt connection time to initiates
         startupSequence()   # make shure after 1st start everything is in order
         
-        # connect to device and get service information
-        bms = jkbms(name=name, model=model, mac=mac, command=command, tag=tag, format=format, records=1, maxConnectionAttempts=30)
-        # log.debug('peripheral device info: %s' %(bms))
+        # connect to devices and get service information
+        bmslist = []
+        i = 0
+        for mac in maclist:
+            bmslist[i] = jkbms(name=namelist[i], model=model, mac=mac, command=command, tag=taglist[i], format=format, records=1, maxConnectionAttempts=30)
+            # log.debug('peripheral device info: %s' %(bms))
         
-        if bms.connect():
-            log.debug('--> YES, I am connected!')
-            # bms.getServices()
-            while True:
-                bms.getBLEData()
-                time.sleep(60)
-            # bms.disconnect()
-        else:
-            log.debug('Failed to connect to {} {}'.format(name, mac))
-        log.debug(json.dumps(out))
-        
-        """ while True:
-            actualrun = time.time()
-            if actualrun - lastrun > interval:
-                time.sleep(1)
-                
+            if bmslist[i].connect():
+                log.info('Connected to {}'.format(namelist[i]))
             else:
-                time.sleep(1) """
+                log.info('Failed to connect to {} {}'.format(namelist[i], mac))
+        
+        while True:
+            for bms in bmslist:
+                bms.getBLEData()
+                time.sleep(60)       
+     
 
     except:
         log.error('exeption raised waiting for 2 minutes before retrying')
