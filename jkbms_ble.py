@@ -266,24 +266,30 @@ class BLEDelegate(DefaultDelegate):
         unknown5 = float(LittleHex2Short(record[0:2])) / 1000.0           # unknown
         del record[0:2]
         log.debug('Unknown value #5:   %s' % (unknown5))
-        packvoltage = float(LittleHex2UInt(record[0:4])) / 1000.0            # pack voltage
+        packvoltage = float(LittleHex2UInt(record[0:4])) / 1000.0            # pack voltag
         del record[0:4]
         log.debug('Pack voltage:       %s' % (packvoltage))
+        mqttClient.publish(self.jkbms.tag + '/CellData/PackVoltage', packvoltage)
         packpower = float(LittleHex2UInt(record[0:4])) / 1000.0              # pack power
         del record[0:4]
         log.debug('Pack power:         %s' % (packpower))
+        mqttClient.publish(self.jkbms.tag + '/CellData/PackPower', packpower)
         balancecurent = float(LittleHex2Int(record[0:4])) / 1000.0           # balance current
         del record[0:4]
         log.debug('Balance current:    %s' % (balancecurent))
+        mqttClient.publish(self.jkbms.tag + '/CellData/BalanceCurrent', balancecurent)
         packtemp1 = float(LittleHex2Short(record[0:2])) / 10.0               # Temp. sensor #1
         del record[0:2]
         log.debug('T1:                 %s' % (packtemp1))
+        mqttClient.publish(self.jkbms.tag + '/CellData/PackTemp_1', packtemp1)
         packtemp2 = float(LittleHex2Short(record[0:2])) / 10.0               # Temp. sensor #2
         del record[0:2]
         log.debug('T2:                 %s' % (packtemp2))
+        mqttClient.publish(self.jkbms.tag + '/CellData/PackTemp_2', packtemp2)
         mostemp = float(LittleHex2Short(record[0:2])) / 10.0                 # MOS Temp. sensor
         del record[0:2]
         log.debug('MOS Temp.:          %s' % (mostemp))
+        mqttClient.publish(self.jkbms.tag + '/CellData/MOSTemp', mostemp)
         unknown6 = float(LittleHex2Short(record[0:2])) / 1000.0              # unknown
         del record[0:2]
         log.debug('Unknown value #6:   %s' % (unknown6))
@@ -296,18 +302,22 @@ class BLEDelegate(DefaultDelegate):
         soc = Hex2Int(record[0:1])                                           # pack SOC
         del record[0:1]
         log.debug('Pack SOC:   %s' % (soc))
+        mqttClient.publish(self.jkbms.tag + '/CellData/PackSOC', soc)
         caparemaining = float(LittleHex2UInt(record[0:4])) / 1000.0          # remaining capacity
         del record[0:4]
         log.debug('Capa remaining:     %s' % (caparemaining))
         capanominal = float(LittleHex2UInt(record[0:4])) / 1000.0            # nominal capacity
         del record[0:4]
         log.debug('Capa nominal:       %s' % (capanominal))
+        mqttClient.publish(self.jkbms.tag + '/CellData/CapaNominal', capanominal)
         cyclecount = float(LittleHex2UInt(record[0:4]))                      # cycle count
         del record[0:4]
         log.debug('Cycle count:        %s' % (cyclecount))
+        mqttClient.publish(self.jkbms.tag + '/CellData/CycleCount', cyclecount)
         capacycle = float(LittleHex2UInt(record[0:4])) / 1000.0              # cycle capacity
         del record[0:4]
         log.debug('Capa cycled:       %s' % (capacycle))
+        mqttClient.publish(self.jkbms.tag + '/CellData/CapaCycled', capacycle)
         unknown9 = float(LittleHex2Short(record[0:2])) / 1000.0              # unknown
         del record[0:2]
         log.debug('Unknown value #9:   %s' % (unknown9))
@@ -356,9 +366,11 @@ class BLEDelegate(DefaultDelegate):
         charge = float(LittleHex2Short(record[0:2])) / 1000.0                # charge?
         del record[0:2]
         log.debug('Charge?:            %s' % (charge))
+        mqttClient.publish(self.jkbms.tag + '/CellData/ChargeCurrent', charge)
         discharge = float(LittleHex2Short(record[0:2])) / 1000.0             # discharge?
         del record[0:2]
         log.debug('Discharge?:         %s' % (discharge))
+        mqttClient.publish(self.jkbms.tag + '/CellData/DischargeCurrent', discharge)
         unknown23 = float(LittleHex2Short(record[0:2])) / 1000.0             # unknown
         del record[0:2]
         log.debug('Unknown value #23:  %s' % (unknown23))
