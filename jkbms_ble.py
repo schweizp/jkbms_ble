@@ -901,17 +901,21 @@ if __name__ == "__main__":
         
         # connect to devices and get service information
         i = listitem
-        bms = jkbms(name=namelist[i], model=model, mac=maclist[i], command=command, tag=taglist[i], format=format, records=1, maxConnectionAttempts=30)
-            # log.debug('peripheral device info: %s' %(bms))
-        
-        if bms.connect():
-            log.info('Connected to {}'.format(namelist[i]))
+        if i < len(namelist):
+            bms = jkbms(name=namelist[i], model=model, mac=maclist[i], command=command, tag=taglist[i], format=format, records=1, maxConnectionAttempts=30)
+                # log.debug('peripheral device info: %s' %(bms))
+            
+            if bms.connect():
+                log.info('Connected to {}'.format(namelist[i]))
+            else:
+                log.info('Failed to connect to {} {}'.format(namelist[i], maclist[i]))
+            
+            while True:
+                bms.getBLEData()
+                time.sleep(2)
         else:
-            log.info('Failed to connect to {} {}'.format(namelist[i], maclist[i]))
-        
-        while True:
-            bms.getBLEData()
-            time.sleep(5)       
+            log.error('There are only {} devices selectable! --bms must be <= number of devices.'.format(len(namelist)))
+            exit()       
      
 
     except:
