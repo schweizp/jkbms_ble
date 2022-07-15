@@ -902,7 +902,7 @@ if __name__ == "__main__":
         bmslist = []
         i = 0
         for mac in maclist:
-            bmslist[i] = jkbms(name=namelist[i], model=model, mac=mac, command=command, tag=taglist[i], format=format, records=1, maxConnectionAttempts=30)
+            bmslist.append(jkbms(name=namelist[i], model=model, mac=mac, command=command, tag=taglist[i], format=format, records=1, maxConnectionAttempts=30))
             # log.debug('peripheral device info: %s' %(bms))
         
             if bmslist[i].connect():
