@@ -628,6 +628,7 @@ class jkbms:
         log.debug('Connected to %s' % (deviceName[0]))
         log.debug('Connected to %s' % (deviceName[0].read())) '''
 
+        log.info('Getting BLE Data from {}; MAC: {}'.format(self.name, self.mac))
 
         # Connect to the notify service
         serviceNotifyUuid = 'ffe0'
