@@ -909,6 +909,7 @@ if __name__ == "__main__":
                 log.info('Connected to {}'.format(namelist[i]))
             else:
                 log.info('Failed to connect to {} {}'.format(namelist[i], mac))
+            i += 1
         
         while True:
             for bms in bmslist:
