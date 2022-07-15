@@ -654,6 +654,7 @@ class jkbms:
         # log.debug('Write getInfo to read handle', self.device.writeCharacteristic(handleRead, getInfo))
         self.device.writeCharacteristic(handleRead, getInfo)
         secs = 0
+        time.sleep(10)
         '''while True:
             if self.device.waitForNotifications(1.0):
                 continue
@@ -667,6 +668,7 @@ class jkbms:
         recordsToGrab = self.records
         # log.debug('Grabbing {} records (after inital response)'.format(recordsToGrab))
 
+        time.sleep(60)
         '''while True:
             loops += 1
             if loops > recordsToGrab * 15 + 16:
