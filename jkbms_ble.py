@@ -654,13 +654,12 @@ class jkbms:
         # log.debug('Write getInfo to read handle', self.device.writeCharacteristic(handleRead, getInfo))
         self.device.writeCharacteristic(handleRead, getInfo)
         secs = 0
-        time.sleep(10)
-        '''while True:
+        while True:
             if self.device.waitForNotifications(1.0):
                 continue
             secs += 1
             if secs > 5:
-                break'''
+                break
 
         # log.debug('Write getCellInfo to read handle', self.device.writeCharacteristic(handleRead, getCellInfo))
         self.device.writeCharacteristic(handleRead, getCellInfo)
@@ -668,14 +667,13 @@ class jkbms:
         recordsToGrab = self.records
         # log.debug('Grabbing {} records (after inital response)'.format(recordsToGrab))
 
-        time.sleep(60)
-        '''while True:
+        while True:
             loops += 1
             if loops > recordsToGrab * 15 + 16:
                 # log.debug('Got {} records'.format(recordsToGrab))
                 break
             if self.device.waitForNotifications(1.0):
-                continue'''
+                continue
 
     def disconnect(self):
         log.debug('Disconnecting...')
@@ -909,8 +907,10 @@ if __name__ == "__main__":
         if bms.connect():
             log.debug('--> YES, I am connected!')
             # bms.getServices()
-            bms.getBLEData()
-            bms.disconnect()
+            while True:
+                bms.getBLEData()
+                time.sleep(60)
+            # bms.disconnect()
         else:
             log.debug('Failed to connect to {} {}'.format(name, mac))
         log.debug(json.dumps(out))
