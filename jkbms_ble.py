@@ -467,42 +467,21 @@ class BLEDelegate(DefaultDelegate):
             self.processRecord(record)
 
 
-
-
-
-
-# --------------------------------------------------------------------------- #
-# configure the client logging
-# --------------------------------------------------------------------------- #
-# create logger
-log = logging.getLogger('jkbms_ble')
-log.setLevel(logging.WARNING)
-# create file handler which logs even debug messages
-fh = logging.handlers.TimedRotatingFileHandler('jkbms_ble.log','D', 1, 5)
-fh.setLevel(logging.INFO)
-# create console handler with a higher log level
-ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
-# create formatter and add it to the handlers
-formatter = logging.Formatter('%(levelname)s - %(message)s')
-fh.setFormatter(formatter)
-ch.setFormatter(formatter)
-# add the handlers to the logger
-log.addHandler(fh)
-log.addHandler(ch)
-
 # parse arguments
 parser = argparse.ArgumentParser(description = 'Victron modbus control test')
 parser.add_argument('--version', action='version', version='%(prog)s v')
 parser.add_argument('--debug', action="store_true", help='enable DEBUG logging')
 parser.add_argument('--info', action="store_true", help='enable INFO logging')
-# parser.add_argument('--power', default=100, type=int, help='set the output of all MIs to xx percent')
+parser.add_argument('--name', default='defaultName', type=str, help='set the device name (informative)')
+parser.add_argument('--mac', type=str, help='set the device name (informative)')
 # parser.add_argument('--max', action="store_true", help='set the output of all MIs to 100 percent')
 # parser.add_argument('--min', action="store_true", help='set the output of all MIs to 2 percent')
 # parser.add_argument('--on', action="store_true", help='switch all MIs ON')
 # parser.add_argument('--off', action="store_true", help='switch all MIs OFF')
 # parser.add_argument('--mqtt', action="store_true", help= 'enable mqtt data output')
 requiredArguments = parser.add_argument_group('required arguments')
+parser.add_argument('--bms', default=1, type=int, help='set the device number to be queried (required)')
+
 args = parser.parse_args()
 
 if args.info: # switch to info level
@@ -524,6 +503,7 @@ if args.debug: # switch to debug level
     ch.setLevel(logging.DEBUG)
     fh.setLevel(logging.DEBUG)
 
+
 # setup mqtt infos
 PORT = 1883
 BROKER = "mosquitto.fritz.box"
@@ -542,11 +522,32 @@ maclist = ['C8:47:8C:E2:81:41', 'C8:47:8C:E2:92:0C']
 command = 'command'
 taglist = ['JKBMS_top', 'JKBMS_bot']
 format = 'mqtt'
+listitem = args.bms
 
 out=dict()
 c_high=0.00
 c_low=10.00
 c_diff=0.00
+
+# --------------------------------------------------------------------------- #
+# configure the client logging
+# --------------------------------------------------------------------------- #
+# create logger
+log = logging.getLogger('jkbms_ble')
+log.setLevel(logging.WARNING)
+# create file handler which logs even debug messages
+fh = logging.handlers.TimedRotatingFileHandler('jkbms_ble_{}.log'.format(namelist[listitem]),'D', 1, 5)
+fh.setLevel(logging.INFO)
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.ERROR)
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+# add the handlers to the logger
+log.addHandler(fh)
+log.addHandler(ch)
 
 
 
@@ -900,22 +901,18 @@ if __name__ == "__main__":
         startupSequence()   # make shure after 1st start everything is in order
         
         # connect to devices and get service information
-        bmslist = []
-        i = 0
-        for mac in maclist:
-            bmslist.append(jkbms(name=namelist[i], model=model, mac=mac, command=command, tag=taglist[i], format=format, records=1, maxConnectionAttempts=30))
+        i = listitem
+        bms = jkbms(name=namelist[i], model=model, mac=maclist[i], command=command, tag=taglist[i], format=format, records=1, maxConnectionAttempts=30)
             # log.debug('peripheral device info: %s' %(bms))
         
-            if bmslist[i].connect():
-                log.info('Connected to {}'.format(namelist[i]))
-            else:
-                log.info('Failed to connect to {} {}'.format(namelist[i], mac))
-            i += 1
+        if bms.connect():
+            log.info('Connected to {}'.format(namelist[i]))
+        else:
+            log.info('Failed to connect to {} {}'.format(namelist[i], maclist[i]))
         
         while True:
-            for bms in bmslist:
-                bms.getBLEData()
-                time.sleep(20)       
+            bms.getBLEData()
+            time.sleep(20)       
      
 
     except:
