@@ -484,26 +484,6 @@ parser.add_argument('--bms', default=1, type=int, help='set the device number to
 
 args = parser.parse_args()
 
-if args.info: # switch to info level
-    log.setLevel(logging.INFO)
-    ch.setLevel(logging.INFO)
-    fh.setLevel(logging.INFO)
-
-if args.debug: # switch to debug level
-    # create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(threadName)s - '
-                                    '%(levelname)s - %(module)s:%(lineno)s - %(message)s')
-    fh.setFormatter(formatter)
-    ch.setFormatter(formatter)
-    # add the handlers to the logger
-    log.addHandler(fh)
-    log.addHandler(ch)
-    
-    log.setLevel(logging.DEBUG)
-    ch.setLevel(logging.DEBUG)
-    fh.setLevel(logging.DEBUG)
-
-
 # setup mqtt infos
 PORT = 1883
 BROKER = "mosquitto.fritz.box"
@@ -548,6 +528,25 @@ ch.setFormatter(formatter)
 # add the handlers to the logger
 log.addHandler(fh)
 log.addHandler(ch)
+
+if args.info: # switch to info level
+    log.setLevel(logging.INFO)
+    ch.setLevel(logging.INFO)
+    fh.setLevel(logging.INFO)
+
+if args.debug: # switch to debug level
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(threadName)s - '
+                                    '%(levelname)s - %(module)s:%(lineno)s - %(message)s')
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+    # add the handlers to the logger
+    log.addHandler(fh)
+    log.addHandler(ch)
+    
+    log.setLevel(logging.DEBUG)
+    ch.setLevel(logging.DEBUG)
+    fh.setLevel(logging.DEBUG)
 
 
 
