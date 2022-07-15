@@ -186,7 +186,7 @@ class BLEDelegate(DefaultDelegate):
         log.debug('Uptime: {}D{}H{}M{}S'.format(days, hours, minutes, seconds))
         # mqttClient.publish(self.jkbms.tag + '/Info/Uptime', deviceName.decode('utf-8'))
         log.debug('Power Up Times: {}'.format(powerCycle))
-        mqttClient.publish(self.jkbms.tag + '/Info/PowerCycle', powerCycle.decode('utf-8'))
+        mqttClient.publish(self.jkbms.tag + '/Info/PowerCycle', powerCycle)
         
     def processExtendedRecord(self, record):
         log.debug('Processing extended record')
