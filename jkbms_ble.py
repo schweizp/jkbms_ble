@@ -216,6 +216,7 @@ class BLEDelegate(DefaultDelegate):
             _volt = float(LittleHex2Short(volt)) / 1000.0
             out['B{:d}'.format(cell+1)]=round(_volt,4)
             log.debug('Cell: {:02d}, Volts: {:.4f}'.format(cell + 1, _volt))
+            mqttClient.publish(self.jkbms.tag + '/CellData/VoltageCell#{2d}'.format(cell+1), _volt)
             #publish({'VoltageCell{:02d}'.format(cell + 1): _volt}, format=self.jkbms.format, broker=self.jkbms.mqttBroker, tag=self.jkbms.tag)
             '''_totalvolt += _volt
             if c_high < _volt:
