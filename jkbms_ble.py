@@ -911,7 +911,7 @@ if __name__ == "__main__":
         
         while True:
             bms.getBLEData()
-            time.sleep(20)       
+            time.sleep(5)       
      
 
     except:
