@@ -589,7 +589,7 @@ class jkbms:
         attempts = 0
         while not connected:
             attempts += 1
-            log.debug('Attempt #{} to connect to {}'.format(attempts, self.name))
+            log.info('Attempt #{} to connect to {}'.format(attempts, self.name))
             if attempts > self.maxConnectionAttempts:
                 log.info('Cannot connect to {} with mac {} - exceeded {} attempts'.format(self.name, self.mac, attempts - 1))
                 return connected
@@ -665,13 +665,18 @@ class jkbms:
         recordsToGrab = self.records
         # log.debug('Grabbing {} records (after inital response)'.format(recordsToGrab))
 
-        while True:
-            loops += 1
-            if loops > recordsToGrab * 15 + 16:
-                # log.debug('Got {} records'.format(recordsToGrab))
-                break
-            if self.device.waitForNotifications(1.0):
-                continue
+        try:
+            while True:
+                loops += 1
+                if loops > recordsToGrab * 15 + 16:
+                    # log.debug('Got {} records'.format(recordsToGrab))
+                    break
+                if self.device.waitForNotifications(1.0):
+                    continue
+            return(1)       # everything ok
+        except:
+            return(0)       # there was a problem while getting the data
+            
 
     def disconnect(self):
         log.debug('Disconnecting...')
@@ -911,8 +916,13 @@ if __name__ == "__main__":
                 log.info('Failed to connect to {} {}'.format(namelist[i], maclist[i]))
             
             while True:
-                bms.getBLEData()
-                time.sleep(2)
+                if bms.getBLEData():
+                    time.sleep(2)
+                else:
+                    if bms.connect():           # try reconnecting to the BLE-service
+                        log.info('Re-Connected to {}'.format(namelist[i]))
+                    else:
+                        log.info('Reconnect to {} has failed!'.format(namelist[i]))
         else:
             log.error('There are only {} devices selectable! --bms must be <= number of devices.'.format(len(namelist)))
             exit()       
