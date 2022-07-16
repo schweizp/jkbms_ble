@@ -679,6 +679,7 @@ class jkbms:
                     continue
             return(1)       # everything ok
         except:
+            log.debug('Exception thrown, disconnected? --> return(0)')
             return(0)       # there was a problem while getting the data
             
 
@@ -923,6 +924,7 @@ if __name__ == "__main__":
                 if bms.getBLEData():
                     time.sleep(1)
                 else:
+                    log.info('got 0 back from getBLEData(), try reconnecting... {}'.format(namelist[i]))
                     if bms.connect():           # try reconnecting to the BLE-service
                         log.info('Re-Connected to {}'.format(namelist[i]))
                     else:
