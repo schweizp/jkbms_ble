@@ -663,7 +663,6 @@ class jkbms:
                 secs += 1
                 if secs > 5:
                     break
-            return(1)        # everything ok
         except:
             log.debug('Exception thrown, disconnected? --> return(0)')
             return(0)       # there was a problem while getting the data
