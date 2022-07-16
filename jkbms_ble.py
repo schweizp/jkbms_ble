@@ -516,7 +516,11 @@ c_diff=0.00
 log = logging.getLogger('jkbms_ble')
 log.setLevel(logging.WARNING)
 # create file handler which logs even debug messages
-fh = logging.handlers.TimedRotatingFileHandler('jkbms_ble_{}.log'.format(namelist[listitem]),'D', 1, 5)
+if listitem < len(namelist):
+    fh = logging.handlers.TimedRotatingFileHandler('jkbms_ble_{}.log'.format(namelist[listitem]),'D', 1, 5)
+else:
+    log.error('There are only {} devices selectable! --bms must be <= number of devices.'.format(len(namelist)))
+    exit()
 fh.setLevel(logging.INFO)
 # create console handler with a higher log level
 ch = logging.StreamHandler()
