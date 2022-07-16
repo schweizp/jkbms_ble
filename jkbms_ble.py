@@ -917,7 +917,7 @@ if __name__ == "__main__":
             
             while True:
                 if bms.getBLEData():
-                    time.sleep(2)
+                    time.sleep(1)
                 else:
                     if bms.connect():           # try reconnecting to the BLE-service
                         log.info('Re-Connected to {}'.format(namelist[i]))
