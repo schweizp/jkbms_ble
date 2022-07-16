@@ -656,12 +656,17 @@ class jkbms:
         # log.debug('Write getInfo to read handle', self.device.writeCharacteristic(handleRead, getInfo))
         self.device.writeCharacteristic(handleRead, getInfo)
         secs = 0
-        while True:
-            if self.device.waitForNotifications(1.0):
-                continue
-            secs += 1
-            if secs > 5:
-                break
+        try:
+            while True:
+                if self.device.waitForNotifications(1.0):
+                    continue
+                secs += 1
+                if secs > 5:
+                    break
+            return(1)        # everything ok
+        except:
+            log.debug('Exception thrown, disconnected? --> return(0)')
+            return(0)       # there was a problem while getting the data
 
         # log.debug('Write getCellInfo to read handle', self.device.writeCharacteristic(handleRead, getCellInfo))
         self.device.writeCharacteristic(handleRead, getCellInfo)
