@@ -225,7 +225,7 @@ class BLEDelegate(DefaultDelegate):
         del record[0:size]
         avgcellvoltage = float(LittleHex2Short(record[0:size])) / 1000.0     # Avg. cell voltage in pack
         del record[0:size]
-        deltacellvoltage = float(LittleHex2Short(record[0:size])) / 1000.0   # delta voltage between highest and lowest cell
+        deltacellvoltage = float(LittleHex2Short(record[0:size]))            # delta voltage between highest and lowest cell
         del record[0:size]
         balancercurrent = float(LittleHex2Short(record[0:size])) / 1000.0    # balancer cell / current / ?
         del record[0:size]
