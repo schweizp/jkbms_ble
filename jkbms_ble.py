@@ -195,11 +195,11 @@ class BLEDelegate(DefaultDelegate):
         log.debug('Record number: {}'.format(counter))
 
     def processCellDataRecord02(self, record):      # 2 Byte Format
-        log.debug('Processing 2 Byte cell data record')
+        # log.debug('Processing 2 Byte cell data record')
         # log.debug('Record length {}'.format(len(record)))
         del record[0:5]
         counter = record.pop(0)
-        log.debug('Record number: {}'.format(counter))
+        # log.debug('Record number: {}'.format(counter))
         # Process cell voltages
         volts = []
         size = 2                # changed from 4 to 2
@@ -908,49 +908,50 @@ if __name__ == "__main__":
     interval = 60.0
     lastrun = time.time() - 55
 
-    try:            
-        log.info("Startup; wait 10s to initialize communication")
-        time.sleep(10)      # wait 10s to give mqtt connection time to initiates
-        startupSequence()   # make shure after 1st start everything is in order
-        
-        # connect to devices and get service information
-        i = listitem
-        if i < len(namelist):
-            bms = jkbms(name=namelist[i], model=model, mac=maclist[i], command=command, tag=taglist[i], format=format, records=1, maxConnectionAttempts=30)
-                # log.debug('peripheral device info: %s' %(bms))
+    while True:
+        try:            
+            log.info("Startup; wait 10s to initialize communication")
+            time.sleep(10)      # wait 10s to give mqtt connection time to initiates
+            startupSequence()   # make shure after 1st start everything is in order
             
-            if bms.connect():
-                log.info('Connected to {}'.format(namelist[i]))
-            else:
-                log.info('Failed to connect to {} {}'.format(namelist[i], maclist[i]))
-            
-            while True:
-                if bms.getBLEData():
-                    time.sleep(1)
+            # connect to devices and get service information
+            i = listitem
+            if i < len(namelist):
+                bms = jkbms(name=namelist[i], model=model, mac=maclist[i], command=command, tag=taglist[i], format=format, records=1, maxConnectionAttempts=30)
+                    # log.debug('peripheral device info: %s' %(bms))
+                
+                if bms.connect():
+                    log.info('Connected to {}'.format(namelist[i]))
                 else:
-                    log.info('got 0 back from getBLEData(), try reconnecting... {}'.format(namelist[i]))
-                    if bms.connect():           # try reconnecting to the BLE-service
-                        log.info('Re-Connected to {}'.format(namelist[i]))
+                    log.info('Failed to connect to {} {}'.format(namelist[i], maclist[i]))
+                
+                while True:
+                    if bms.getBLEData():
+                        time.sleep(1)
                     else:
-                        log.info('Reconnect to {} has failed!'.format(namelist[i]))
-        else:
-            log.error('There are only {} devices selectable! --bms must be <= number of devices.'.format(len(namelist)))
-            exit()       
-     
+                        log.info('got 0 back from getBLEData(), try reconnecting... {}'.format(namelist[i]))
+                        if bms.connect():           # try reconnecting to the BLE-service
+                            log.info('Re-Connected to {}'.format(namelist[i]))
+                        else:
+                            log.info('Reconnect to {} has failed!'.format(namelist[i]))
+            else:
+                log.error('There are only {} devices selectable! --bms must be <= number of devices.'.format(len(namelist)))
+                exit()       
+        
 
-    except:
-        log.error('exeption raised waiting for 2 minutes before retrying')
-        log.exception(sys.exc_info())
-        # raise
-        bms.disconnect()
-        time.sleep(120)
-        mqttClient.reconnect()
-        bms.connect()
+        except:
+            log.error('exeption raised waiting for 2 minutes before retrying')
+            log.exception(sys.exc_info())
+            # raise
+            bms.disconnect()
+            time.sleep(120)
+            mqttClient.reconnect()
+            bms.connect()
 
-    finally:
-        log.info("finished")
+        '''finally:
+            log.info("finished")
 
-        # close the clients
-        mqttClient.loop_stop()
-        mqttClient.disconnect()
-        bms.disconnect()
+            # close the clients
+            mqttClient.loop_stop()
+            mqttClient.disconnect()
+            bms.disconnect()'''
