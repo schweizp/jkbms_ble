@@ -1,0 +1,12 @@
+[Unit]
+Description=<Starts the BLE-interface script for the Bottom-JKBMS as service>
+After=network.target
+
+[Service]
+WorkingDirectory=/home/pi/jkbms_ble
+ExecStart=/usr/bin/python3 /home/pi/jkbms_ble/jkbms_ple.py --bms 1 --debug
+User=pi
+Group=pi
+
+[Install]
+WantedBy=mulit-user.target
